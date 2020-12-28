@@ -1,0 +1,75 @@
+{
+    "name": "Vue (Community)",
+    "build": {
+        "dockerfile": "Dockerfile",
+        "context": "..",
+        // Update 'VARIANT' to pick a Node version: 10, 12, 14
+        "args": {
+            "VARIANT": "12"
+        }
+    },
+    "postStartCommand": "nohup sh -c 'vue ui -H 0.0.0.0 --headless </dev/null 2>&1 | sudo tee /var/log/vue-ui.log' &> /dev/null &",
+    // Set *default* container specific settings.json values on container create.
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/zsh",
+        "editor.formatOnSave": true,
+        "editor.rulers": [
+            120
+        ],
+        "editor.codeActionsOnSave": {
+            "source.fixAll.eslint": true
+        },
+        "[javascript]": {
+            "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+            "editor.formatOnSave": false
+        },
+        "[typescript]": {
+            "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+            "editor.formatOnSave": false
+        },
+        "[vue]": {
+            "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+            "editor.formatOnSave": false
+        },
+        "files.eol": "\n",
+        "files.exclude": {
+            "**/.DS_Store": true,
+            "**/.git/": true,
+            "**/.hg": true,
+            "**/.svn": true,
+            "**/bower_components": true,
+            "**/CVS": true,
+            "**/node_modules": true,
+            "**/__pycache__": true,
+            "**/.pytest_cache": true,
+            "**/.virtualenvs": true
+        },
+        "files.insertFinalNewline": true,
+        "files.trimTrailingWhitespace": true,
+        "html.format.endWithNewline": true,
+        "html.format.indentInnerHtml": true,
+        "html.format.wrapLineLength": 0,
+        "importCost.typescriptExtensions": [
+            "\\.tsx?$",
+            "\\.vue$"
+        ],
+        "javascript.format.enable": false
+    },
+    // Add the IDs of extensions you want installed when the container is created.
+    "extensions": [
+        "dbaeumer.vscode-eslint",
+        "octref.vetur",
+        "esbenp.prettier-vscode",
+        "wix.vscode-import-cost",
+        "eamodio.gitlens"
+    ],
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    "forwardPorts": [
+        8080,
+        8000,
+    ],
+    // Use 'postCreateCommand' to run commands after the container is created.
+    // "postCreateCommand": "uname -a",
+    // Comment out connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+    "remoteUser": "node"
+}
