@@ -1,17 +1,5 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col>
-        <v-checkbox
-          v-model="isSandbox"
-          label="Is Sandbox"
-        />
-        <v-text-field
-          v-model="iexToken"
-          label="IEX Token"
-        />
-      </v-col>
-    </v-row>
     <v-row v-if="iexSummaryData">
       <v-col>
         <h1>IEX Summary Data</h1>
@@ -93,11 +81,11 @@ am4core.useTheme(am4themes_animated);
 
 @Component
 export default class Summary extends Vue {
-    iexToken = '';
+    iexToken = this.$store.state.config.iexToken;
+
+    isSandbox = this.$store.state.config.isSandbox;
 
     iexSummaryData = '';
-
-    isSandbox = false;
 
     carousel = true;
 
@@ -133,6 +121,13 @@ export default class Summary extends Vue {
         this.$refs.chart1 as HTMLElement,
         am4charts.PieChart,
       );
+
+      // Catch when this.charts is empty return - following code will error out if there is no charts data
+      // TODO: Need to handle this in the UI
+      if (this.charts.length === 0) {
+        console.warn('System unable to render charts due to lack of data');
+        return;
+      }
 
       assetChart.data = [{
         category: 'Current Assets',
@@ -171,6 +166,12 @@ export default class Summary extends Vue {
 
     @Watch('iexToken')
     onTokenChange() {
+      this.getiexSummaryData();
+    }
+
+    mounted() {
+      // For now - going to presume the config is always going pass a valid token and sandbox value
+      // As such it should be safe to fetch data the moment the component is loaded
       this.getiexSummaryData();
     }
 

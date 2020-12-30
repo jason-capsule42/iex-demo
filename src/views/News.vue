@@ -1,17 +1,5 @@
 <template>
   <v-container>
-    <v-row>
-      <v-col>
-        <v-checkbox
-          v-model="isSandbox"
-          label="Is Sandbox"
-        />
-        <v-text-field
-          v-model="iexToken"
-          label="IEX Token"
-        />
-      </v-col>
-    </v-row>
     <v-row v-if="iexNewsData">
       <v-col>
         <h1>IEX News Data</h1>
@@ -29,11 +17,11 @@ import IEXCloudClient from 'node-iex-cloud';
 
 @Component
 export default class News extends Vue {
-    iexToken = '';
+    iexToken = this.$store.state.config.iexToken;
+
+    isSandbox = this.$store.state.config.isSandbox;
 
     iexNewsData = '';
-
-    isSandbox = false;
 
     async getiexNewsData() {
       this.iexNewsData = '';
@@ -62,6 +50,12 @@ export default class News extends Vue {
 
     @Watch('iexToken')
     onTokenChange() {
+      this.getiexNewsData();
+    }
+
+    mounted() {
+      // For now - going to presume the config is always going pass a valid token and sandbox value
+      // As such it should be safe to fetch data the moment the component is loaded
       this.getiexNewsData();
     }
 }

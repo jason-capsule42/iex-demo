@@ -2,6 +2,7 @@ import Vue from 'vue';
 import VueRouter, { RouteConfig } from 'vue-router';
 import Summary from '../views/Summary.vue';
 import Company from '../views/Company.vue';
+import Config from '../views/Config.vue';
 
 Vue.use(VueRouter);
 
@@ -23,6 +24,11 @@ const routes: Array<RouteConfig> = [
     path: '/company',
     name: 'Company',
     component: Company,
+  },
+  {
+    path: '/config',
+    name: 'Config',
+    component: Config,
   },
 ];
 

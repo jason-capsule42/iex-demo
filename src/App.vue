@@ -1,6 +1,7 @@
 <template>
   <v-app>
     <v-navigation-drawer
+      v-if="$store.state.config.isInitialized"
       v-model="drawer"
       :mini-variant.sync="miniVariant"
       clipped
@@ -45,7 +46,11 @@
       <v-toolbar-title>Application</v-toolbar-title>
     </v-app-bar>
     <v-main>
-      <v-container fluid>
+      <ModalInitialize v-if="!$store.state.config.isInitialized" />
+      <v-container
+        v-else
+        fluid
+      >
         <v-fade-transition :hide-on-leave="true">
           <router-view />
         </v-fade-transition>
@@ -56,8 +61,13 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import ModalInitialize from './components/modal-initialize.vue';
 
-@Component
+@Component({
+  components: {
+    ModalInitialize,
+  },
+})
 export default class App extends Vue {
     drawer= true;
 
@@ -78,6 +88,11 @@ export default class App extends Vue {
         title: 'Company',
         link: '/company',
         icon: 'mdi-chart-box',
+      },
+      {
+        title: 'Config',
+        link: '/config',
+        icon: 'mdi-cog',
       },
     ]
 }
