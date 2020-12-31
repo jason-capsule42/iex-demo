@@ -81,12 +81,6 @@ am4core.useTheme(am4themes_animated);
 
 @Component
 export default class Summary extends Vue {
-  // get token() {
-  //   const t = this.$store.state.config.iexToken;
-  //   console.warn('computed:', t);
-  //   return t;
-  // }
-
   iexToken = this.$store.state.config.iexToken;
 
   isSandbox = this.$store.state.config.isSandbox;

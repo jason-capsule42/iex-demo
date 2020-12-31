@@ -50,10 +50,10 @@ export default class Company extends Vue {
     this.iexCompanyData = JSON.stringify(data, null, 2);
   }
 
-  @Watch('iexToken')
-  onTokenChange() {
-    this.getiexCompanyData();
-  }
+  // @Watch('iexToken')
+  // onTokenChange() {
+  //   this.getiexCompanyData();
+  // }
 
   mounted() {
     // For now - going to presume the config is always going pass a valid token and sandbox value

@@ -50,10 +50,10 @@ export default class News extends Vue {
     this.iexNewsData = JSON.stringify(data, null, 2);
   }
 
-  @Watch('iexToken')
-  onTokenChange() {
-    this.getiexNewsData();
-  }
+  // @Watch('iexToken')
+  // onTokenChange() {
+  //   this.getiexNewsData();
+  // }
 
   mounted() {
     // For now - going to presume the config is always going pass a valid token and sandbox value
