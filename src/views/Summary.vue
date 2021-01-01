@@ -1,36 +1,38 @@
 <template>
-  <v-container>
-    <v-row v-if="iexSummaryData">
-      <v-col>
-        <h1>IEX Summary Data</h1>
-        <pre>
-        {{ iexSummaryData }}
-        </pre>
-      </v-col>
-    </v-row>
+  <v-container fluid>
     <v-row>
-      <v-col cols="6">
+      <v-col
+        cols="12"
+        md="6"
+      >
         <v-sheet
           elevation="2"
           color="white"
           height="100%"
+          min-height="400"
           width="100%"
           tile
         >
-          <v-row
+          <div
+            id="chartdiv"
+            ref="summaryChart"
             class="fill-height"
             align="center"
             justify="center"
-          >
-            <div>Put Cumulative Performance Widget Here!</div>
-          </v-row>
+            elevation="2"
+            tile
+          />
         </v-sheet>
       </v-col>
-      <v-col cols="6">
+      <v-col
+        cols="12"
+        md="6"
+      >
         <v-sheet
           elevation="2"
           color="white"
           height="100%"
+          min-height="400"
           width="100%"
           tile
         >
@@ -39,33 +41,39 @@
             light
           >
             <v-carousel-item>
-              <v-row
-                ref="chart1"
-                class="fill-height"
+              <div
+                ref="chartAsset"
+                class="fill-height carouselChart"
                 align="center"
                 justify="center"
-              >
-                <div>
-                  First
-                </div>
-              </v-row>
+              />
+              <div>
+                First
+              </div>
             </v-carousel-item>
             <v-carousel-item>
-              <v-row
-                ref="chart2"
-                class="fill-height"
+              <!-- <div
+                ref="chartLiabilities"
+                class="fill-height carouselChart"
                 align="center"
                 justify="center"
-              >
-                <div>
-                  Second
-                </div>
-              </v-row>
+              /> -->
+              <div>
+                Second
+              </div>
             </v-carousel-item>
           </v-carousel>
         </v-sheet>
       </v-col>
     </v-row>
+    <!-- <v-row v-if="iexSummaryData">
+      <v-col>
+        <h1>IEX Summary Data</h1>
+        <pre>
+        {{ iexSummaryData }}
+        </pre>
+      </v-col>
+    </v-row> -->
   </v-container>
 </template>
 
@@ -76,10 +84,15 @@ import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 // eslint-disable-next-line @typescript-eslint/camelcase
 import am4themes_animated from '@amcharts/amcharts4/themes/animated';
+import { DynamicChart } from 'node-iex-cloud/lib/types';
 
 am4core.useTheme(am4themes_animated);
 
-@Component
+@Component({
+  components: {
+    //
+  },
+})
 export default class Summary extends Vue {
   iexToken = this.$store.state.config.iexToken;
 
@@ -89,9 +102,130 @@ export default class Summary extends Vue {
 
   iexSummaryData = '';
 
+  historicalPrices: DynamicChart[] = [];
+
   carousel = true;
 
   charts = new Array<am4core.BaseObject>();
+
+  makeSummaryChart(data: any) {
+    const assetChart = am4core.create(
+      this.$refs.summaryChart as HTMLElement,
+      am4charts.XYChart,
+    );
+
+    assetChart.paddingRight = 20;
+
+    const chartData = [];
+
+    for (let i = 0; i < data.length; i += 1) {
+      // convert date string to date object to speed up chart perf
+      // and enable chart axis grouping
+      const parsedDate = new Date(data[i].date);
+
+      let todayPerf = 0;
+      let yesterdayPerf = 0;
+      let cumulPerf = 0;
+      let cumulPerfPerc = 0;
+
+      if (i > 0) {
+        todayPerf = data[i].close / data[i - 1].close;
+      }
+
+      if (i > 1) {
+        yesterdayPerf = data[i - 1].close / data[i - 2].close;
+
+        cumulPerf = todayPerf * yesterdayPerf;
+
+        cumulPerfPerc = cumulPerf - 1;
+      }
+
+      chartData.push({ date: parsedDate, value: cumulPerfPerc });
+    }
+
+    assetChart.data = chartData;
+
+    const dateAxis = assetChart.xAxes.push(new am4charts.DateAxis());
+    dateAxis.renderer.minGridDistance = 60;
+
+    const valueAxis = assetChart.yAxes.push(new am4charts.ValueAxis());
+    valueAxis.baseValue = 0;
+
+    // Create series
+    const series = assetChart.series.push(new am4charts.LineSeries());
+    series.dataFields.valueY = 'value';
+    series.dataFields.dateX = 'date';
+    series.strokeWidth = 1;
+
+    // add bullet
+    const bullet = series.bullets.push(new am4charts.Bullet());
+    bullet.tooltipText = '{valueY}';
+
+    const range = valueAxis.createSeriesRange(series);
+    range.value = 0;
+    range.endValue = -1000;
+    range.contents.stroke = am4core.color('#FF0000');
+    range.contents.fill = range.contents.stroke;
+
+    // Add scrollbar
+    const scrollbarX = new am4charts.XYChartScrollbar();
+    scrollbarX.series.push(series);
+    assetChart.scrollbarX = scrollbarX;
+
+    assetChart.cursor = new am4charts.XYCursor();
+  }
+
+  makeAssetChart(data: any) {
+    const assetChart = am4core.create(
+      this.$refs.chartAsset as HTMLElement,
+      am4charts.PieChart,
+    );
+
+    assetChart.data = [{
+      category: 'Current Assets',
+      value: data.financials[0].currentAssets,
+    },
+    {
+      category: 'Future Assets',
+      value: data.financials[0].totalAssets - data.financials[0].currentAssets,
+    }];
+
+    const assetSeries = assetChart.series.push(new am4charts.PieSeries());
+    assetSeries.dataFields.category = 'name';
+    assetSeries.dataFields.value = 'value';
+    assetSeries.slices.template.stroke = am4core.color('#000000');
+    assetSeries.slices.template.strokeWidth = 1;
+    assetSeries.slices.template.strokeOpacity = 0.5;
+    assetSeries.labels.template.disabled = true;
+
+    assetChart.legend = new am4charts.Legend();
+    assetChart.legend.maxHeight = 150;
+    assetChart.legend.scrollable = true;
+
+    this.charts.push(assetChart);
+  }
+
+  makeLiabilitiesChart(data: any) {
+    const liabilitiesChart = am4core.create(
+      this.$refs.chartLiabilities as HTMLElement,
+      am4charts.PieChart,
+    );
+
+    liabilitiesChart.data = [{
+      category: 'Long Term Debt',
+      value: data.financials[0].longTermDebt,
+    },
+    {
+      category: 'Short Term Debt',
+      value: data.financials[0].shortTermDebt,
+    }];
+
+    const liabilitiesSeries = liabilitiesChart.series.push(new am4charts.PieSeries());
+    liabilitiesSeries.dataFields.category = 'name';
+    liabilitiesSeries.dataFields.value = 'value';
+
+    this.charts.push(liabilitiesChart);
+  }
 
   async getiexSummaryData() {
     this.iexSummaryData = '';
@@ -109,7 +243,6 @@ export default class Summary extends Vue {
       version: 'stable',
     });
 
-    // const activeSymbol = this.$store.state.analyze.symbol;
     const historicalPrices = await iexClient.symbol(this.symbol).chart('1y', { chartCloseOnly: true });
     const quote = await iexClient.symbol(this.symbol).ohlc(); // Open/Close/High/Low/Bid/Volume/etc.
     const financials = await iexClient.symbol(this.symbol).financials('annual'); // Financials
@@ -120,51 +253,9 @@ export default class Summary extends Vue {
 
     this.iexSummaryData = JSON.stringify(historicalPrices, null, 2);
 
-    const assetChart = am4core.create(
-      this.$refs.chart1 as HTMLElement,
-      am4charts.PieChart,
-    );
-
-    // Catch when this.charts is empty return - following code will error out if there is no charts data
-    // TODO: Need to handle this in the UI
-    if (this.charts.length === 0) {
-      console.warn('System unable to render charts due to lack of data');
-      return;
-    }
-
-    assetChart.data = [{
-      category: 'Current Assets',
-      value: financials.financials[0].currentAssets,
-    },
-    {
-      category: 'Future Assets',
-      value: financials.financials[0].totalAssets - financials.financials[0].currentAssets,
-    }];
-
-    const assetSeries = assetChart.series.push(new am4charts.PieSeries());
-    assetSeries.dataFields.category = 'name';
-    assetSeries.dataFields.value = 'value';
-
-    const liabilitiesChart = am4core.create(
-      this.$refs.chart2 as HTMLElement,
-      am4charts.PieChart,
-    );
-
-    liabilitiesChart.data = [{
-      category: 'Long Term Debt',
-      value: financials.financials[0].longTermDebt,
-    },
-    {
-      category: 'Short Term Debt',
-      value: financials.financials[0].shortTermDebt,
-    }];
-
-    const liabilitiesSeries = liabilitiesChart.series.push(new am4charts.PieSeries());
-    liabilitiesSeries.dataFields.category = 'name';
-    liabilitiesSeries.dataFields.value = 'value';
-
-    this.charts.push(assetChart);
-    this.charts.push(liabilitiesChart);
+    this.makeSummaryChart(historicalPrices);
+    this.makeAssetChart(financials);
+    // this.makeLiabilitiesChart(financials);
   }
 
   // @Watch('token')
@@ -184,3 +275,10 @@ export default class Summary extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+  .carouselChart {
+    margin-bottom: 50px;
+    height: calc(100% - 50px);
+  }
+</style>
