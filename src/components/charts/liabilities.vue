@@ -57,6 +57,14 @@ export default class WidgetCumperf extends Vue {
     const liabilitiesSeries = chart.series.push(new am4charts.PieSeries());
     liabilitiesSeries.dataFields.category = 'name';
     liabilitiesSeries.dataFields.value = 'value';
+    liabilitiesSeries.slices.template.stroke = am4core.color('#000000');
+    liabilitiesSeries.slices.template.strokeWidth = 1;
+    liabilitiesSeries.slices.template.strokeOpacity = 0.5;
+    liabilitiesSeries.labels.template.disabled = true;
+
+    chart.legend = new am4charts.Legend();
+    chart.legend.maxHeight = 150;
+    chart.legend.scrollable = true;
 
     this.charts.push(chart);
   }
