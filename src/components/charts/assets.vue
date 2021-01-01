@@ -4,7 +4,17 @@
     class="fill-height"
     align="center"
     justify="center"
-  />
+  >
+    <div
+      class="fill-height"
+    >
+      <v-progress-circular
+        :size="100"
+        :width="7"
+        indeterminate
+      />
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -93,5 +103,4 @@ export default class WidgetCumperf extends Vue {
 </script>
 
 <style lang="scss" scoped>
-  //
 </style>

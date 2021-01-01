@@ -1,0 +1,12 @@
+// Progress loader
+.v-progress-circular {
+  opacity: .3;
+}
+
+.v-sheet {
+  .v-progress-circular {
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}

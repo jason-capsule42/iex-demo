@@ -28,3 +28,7 @@ import AppBar from './components/app-bar.vue';
 })
 export default class App extends Vue {}
 </script>
+
+<style lang="scss">
+  @import './styles/styles.scss';
+</style>
