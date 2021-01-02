@@ -12,45 +12,34 @@
       </span>
     </v-toolbar-title>
     <v-spacer />
-    <v-menu
-      v-model="searchActive"
-      :close-on-content-click="false"
-      offset-y
+    <v-btn
+      color="transparent"
+      elevation="0"
+      @click="searchActive = true"
     >
-      <template v-slot:activator="{ on, attrs }">
-        <v-btn
-          :class="['searchActivator', {'active': searchActive}]"
-          color="transparent"
-          v-bind="attrs"
-          elevation="0"
-          v-on="on"
-        >
-          <v-icon
-            small
-            left
-          >
-            mdi-magnify
-          </v-icon>
-          <span class="searchIndex">
-            {{ activeSymbol === '' ? 'search' : activeSymbol }}
-          </span>
-        </v-btn>
-      </template>
-      <v-card>
-        <v-card-text>
-          <v-text-field
-            v-model="activeSymbol"
-            placeholder="index"
-            clearable
-            counter="5"
-            dense
-            autofocus
-            @blur="updateSymbol"
-            @keydown.enter="updateSymbol"
-          />
-        </v-card-text>
-      </v-card>
-    </v-menu>
+      <v-icon
+        small
+        left
+      >
+        mdi-magnify
+      </v-icon>
+      <span v-if="!searchActive">
+        search
+      </span>
+      <v-text-field
+        v-else
+        v-model="iexIndex"
+        class="indexSearch"
+        placeholder="index"
+        clearable
+        dense
+        autofocus
+        maxlength="5"
+        :hide-details="true"
+        @keydown.enter="searchActive = false"
+        @blur="searchActive = false"
+      />
+    </v-btn>
     <v-list class="nav-menu">
       <template v-for="(item, idx) in navItems">
         <v-list-item
@@ -127,10 +116,31 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+// import StockModule from '@/store/modules/index';
+import stockModule from '@/store/modules/stock-data';
 
 @Component({
   components: {
-    // ModalInitialize,
+    //
+  },
+  props: {
+    //
+  },
+  data: () => ({
+    //
+  }),
+  computed: {
+    iexIndex: {
+      get() {
+        return `${stockModule.iexIndex}`;
+      },
+      set(value) {
+        stockModule.mutateIexIndex(value);
+      },
+    },
+  },
+  watch: {
+    //
   },
 })
 export default class App extends Vue {
@@ -157,8 +167,6 @@ export default class App extends Vue {
     },
   ]
 
-  activeSymbol = '';
-
   searchActive = false;
 
   nestedMenuActive = false;
@@ -168,20 +176,14 @@ export default class App extends Vue {
       this.$router.push(route);
     }
   }
-
-  updateSymbol() {
-    // Make sure we only update the store if the new value
-    // is different than the stored value
-    if (this.activeSymbol !== this.$store.state.analyze.symbol) {
-      this.$store.commit('mutateSymbol', this.activeSymbol);
-      this.searchActive = false;
-      console.warn('updatedSymbol:', this.activeSymbol);
-    }
-  }
 }
 </script>
 
 <style lang="scss" scoped>
+  .indexSearch {
+    width: 100px;
+  }
+
   .v-btn {
     margin-left: 5px;
   }
@@ -206,33 +208,6 @@ export default class App extends Vue {
         color: unset;
       }
     }
-  }
-
-  .searchActivator {
-    &.active {
-      &:before {
-        background-color: rgba(0, 0, 0, 0.87);
-        background-color: currentColor;
-        border-radius: inherit;
-        bottom: 0;
-        color: inherit;
-        content: "";
-        left: 0;
-        opacity: 0;
-        pointer-events: none;
-        position: absolute;
-        right: 0;
-        top: 0;
-        transition: opacity 0.2s cubic-bezier(0.4, 0, 0.6, 1);
-        opacity: 0.4;
-      }
-    }
-  }
-
-  .searchIndex {
-    width: 85px;
-    overflow: hidden;
-    text-overflow: ellipsis;
   }
 
   .v-application--is-ltr {

@@ -2,22 +2,15 @@ import {
   Module,
   VuexModule,
   Mutation,
-  getModule,
 } from 'vuex-module-decorators';
-import store from '@/store';
 
-@Module({
-  namespaced: true,
-  name: 'config',
-  store,
-  dynamic: true,
-})
-class ConfigModule extends VuexModule {
-  iexToken = '';
+@Module
+export default class ConfigureModule extends VuexModule {
+  public iexToken = '';
 
-  isSandbox = false;
+  public isSandbox = false;
 
-  isInitialized = false;
+  public isInitialized = false;
 
   @Mutation
   mutateToken(token: string) {
@@ -34,7 +27,3 @@ class ConfigModule extends VuexModule {
     this.isInitialized = value;
   }
 }
-
-const configModule = getModule(ConfigModule);
-
-export default configModule;

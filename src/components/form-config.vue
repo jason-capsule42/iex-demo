@@ -10,15 +10,24 @@
           <v-text-field
             ref="tokenInput"
             v-model.lazy="iexToken"
+            class="util_input_search"
             label="IEX Token"
             :rules="tokenRules"
+            clearable
             required
-            @blur="updateToken"
           />
           <v-checkbox
             v-model.lazy="isSandbox"
             label="Is Sandbox"
-            @click="updateSandbox"
+          />
+          <v-text-field
+            v-model="iexIndex"
+            label="Stock Index"
+            placeholder="Enter an initial stock IEX Index"
+            clearable
+            dense
+            maxlength="5"
+            required
           />
         </v-form>
       </v-col>
@@ -28,17 +37,52 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import configModule from '@/store/modules/config';
+import stockModule from '@/store/modules/stock-data';
 
 @Component({
   components: {
     //
   },
+  props: {
+    // iexTokenValue: {},
+  },
+  data: () => ({
+    //
+  }),
+  computed: {
+    iexToken: {
+      get() {
+        return `${configModule.iexToken}`;
+      },
+      set(value) {
+        configModule.mutateToken(value);
+      },
+    },
+    isSandbox: {
+      get() {
+        return configModule.isSandbox;
+      },
+      set(value) {
+        configModule.mutateSandbox(value);
+      },
+    },
+    iexIndex: {
+      get() {
+        return stockModule.iexIndex;
+      },
+      set(value) {
+        stockModule.mutateIexIndex(value);
+      },
+    },
+  },
+  // watch: {
+  //   localIexTokenValue(val) {
+  //     this.$emit('input', val);
+  //   },
+  // },
 })
 export default class FormConfig extends Vue {
-  isSandbox = this.$store.state.config.isSandbox;
-
-  iexToken = this.$store.state.config.iexToken;
-
   tokenRules = [
     // The two following errors should mask the actual issue for
     // improved security while still providing a helpful message
@@ -46,25 +90,6 @@ export default class FormConfig extends Vue {
     (v: string) => /^pk_/.test(v) || 'IEXToken is invalid',
   ];
 
-  valid = true;
-
-  updateToken() {
-    // Be certain we don't store invalid form data
-    if (!this.valid) {
-      return;
-    }
-    this.$store.commit('mutateToken', this.iexToken);
-  }
-
-  updateSandbox() {
-    // Be certain we don't store invalid form data
-    this.$nextTick(() => {
-      if (!this.valid) {
-        return;
-      }
-
-      this.$store.commit('mutateSandbox', this.isSandbox);
-    });
-  }
+  valid = false;
 }
 </script>

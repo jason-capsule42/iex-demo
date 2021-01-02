@@ -2,7 +2,7 @@
   <v-app>
     <AppBar />
     <v-main>
-      <ModalInitialize v-if="!$store.state.config.isInitialized" />
+      <modal-initialize v-if="!$store.state.config.isInitialized" />
       <v-container
         v-else
         fluid

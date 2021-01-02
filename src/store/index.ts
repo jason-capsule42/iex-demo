@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import ConfigModule from './modules/config';
+import ConfigureModule from './modules/configure';
 import AnalyzeModule from './modules/analyze';
 
 Vue.use(Vuex);
@@ -14,7 +14,7 @@ export default new Vuex.Store({
   actions: {
   },
   modules: {
-    config: ConfigModule,
+    config: ConfigureModule,
     analyze: AnalyzeModule,
   },
 });

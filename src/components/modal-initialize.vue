@@ -15,7 +15,7 @@
             If you do not know your API key, please contact your administrator.
           </v-card-text>
           <v-card-text>
-            <FormConfig />
+            <form-config />
           </v-card-text>
           <v-card-actions>
             <v-spacer />
