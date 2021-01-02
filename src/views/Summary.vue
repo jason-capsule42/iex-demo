@@ -33,6 +33,25 @@
                 <p>
                   {{ iexCompanyData.exchange }}
                 </p>
+                <div>
+                  <span :class="['closingPrice']">
+                    ${{ iexClosePrice }}
+                  </span>
+                  <span :class="['priceChange', {'up': currentChangePrice > 0}, {'down': currentChangePrice < 0}]">
+                    <v-icon v-if="currentChangePrice > 0">
+                      mdi-trending-up
+                    </v-icon>
+                    <v-icon v-if="currentChangePrice < 0">
+                      mdi-trending-down
+                    </v-icon>
+                    <span>
+                      {{ currentChangePrice }}
+                    </span>
+                    <span>
+                      {{ currentChangePercent }}%
+                    </span>
+                  </span>
+                </div>
               </v-sheet>
             </v-col>
           </v-row>
@@ -42,12 +61,9 @@
               md="6"
             >
               <v-sheet
-                elevation="2"
-                color="white"
                 height="100%"
                 :min-height="chartMinHeight"
                 width="100%"
-                tile
               >
                 <cumul-perf />
               </v-sheet>
@@ -57,18 +73,22 @@
               md="6"
             >
               <v-sheet
-                elevation="2"
-                color="white"
                 height="100%"
                 :min-height="chartMinHeight"
                 width="100%"
-                tile
               >
                 <v-carousel
                   v-model="carousel"
+                  :hide-delimiter-background="true"
+                  :show-arrows-on-hover="true"
+                  cycle
+                  interval="10000"
                   light
                 >
-                  <v-carousel-item>
+                  <v-carousel-item
+                    transition="fade-transition"
+                    reverse-transition="fade-transition"
+                  >
                     <v-sheet
                       color="white"
                       height="100%"
@@ -78,7 +98,10 @@
                       <asset-chart class="carouselChart" />
                     </v-sheet>
                   </v-carousel-item>
-                  <v-carousel-item>
+                  <v-carousel-item
+                    transition="fade-transition"
+                    reverse-transition="fade-transition"
+                  >
                     <v-sheet
                       color="white"
                       height="100%"
@@ -92,7 +115,7 @@
               </v-sheet>
             </v-col>
           </v-row>
-          <v-row>
+          <!-- <v-row>
             <v-col>
               <v-row>
                 <v-col>
@@ -102,12 +125,12 @@
                 </v-col>
                 <v-col>
                   <pre>
-                    <!-- {{ iexCompanyData }} -->
+                    {{ iexCompanyData }}
                   </pre>
                 </v-col>
               </v-row>
             </v-col>
-          </v-row>
+          </v-row> -->
         </v-container>
       </template>
     </template>
@@ -165,6 +188,21 @@ import LiabilitiesChart from '../components/charts/liabilities.vue';
         return stockModule.iexCompanyData;
       },
     },
+    iexClosePrice: {
+      get() {
+        return stockModule.currentClosingPrice;
+      },
+    },
+    currentChangePrice: {
+      get() {
+        return stockModule.currentChangePrice;
+      },
+    },
+    currentChangePercent: {
+      get() {
+        return stockModule.currentChangePercent;
+      },
+    },
     // iexNewsData: {
     //   get() {
     //     return stockModule.iexNewsData;
@@ -176,6 +214,33 @@ export default class Summary extends Vue {}
 </script>
 
 <style lang="scss" scoped>
+  .closingPrice {
+    font-size: 2em;
+    font-weight: 700;
+  }
+
+  .priceChange {
+    &.up {
+      color: green;
+
+      .v-icon {
+        color: green;
+      }
+    }
+
+    &.down {
+      color: red;
+
+      .v-icon {
+        color: red;
+      }
+    }
+
+    span {
+      margin-left: 5px;
+    }
+  }
+
   .carouselChart {
     margin-bottom: 50px;
     height: calc(100% - 50px);

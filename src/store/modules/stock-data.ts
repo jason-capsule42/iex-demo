@@ -21,13 +21,29 @@ class IndexModule extends VuexModule {
 
   dataFetchErrorMsg = '';
 
-  iexHistoricalPricesData = '';
+  iexHistoricalPricesData = [];
 
-  iexFinancialData = {};
+  iexFinancialData = [];
 
-  iexCompanyData = {};
+  iexCompanyData = [];
 
   iexNewsData = '';
+
+  get currentClosingPrice() {
+    const lastEntry = this.iexHistoricalPricesData[this.iexHistoricalPricesData.length - 1];
+    return JSON.parse(JSON.stringify(lastEntry)).close;
+  }
+
+  get currentChangePrice() {
+    const lastEntry = this.iexHistoricalPricesData[this.iexHistoricalPricesData.length - 1];
+    const currencyAmount = Math.round((JSON.parse(JSON.stringify(lastEntry)).change + Number.EPSILON) * 100) / 100;
+    return currencyAmount;
+  }
+
+  get currentChangePercent() {
+    const lastEntry = this.iexHistoricalPricesData[this.iexHistoricalPricesData.length - 1];
+    return JSON.parse(JSON.stringify(lastEntry)).changePercent;
+  }
 
   @Mutation
   mutateIexIndex(value: string) {
@@ -50,7 +66,7 @@ class IndexModule extends VuexModule {
   }
 
   @Mutation
-  mutateIexHistoricalData(value: string) {
+  mutateIexHistoricalData(value: object) {
     this.iexHistoricalPricesData = value;
   }
 
