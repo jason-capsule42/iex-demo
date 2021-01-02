@@ -7,7 +7,43 @@
         v-else
         :hide-on-leave="true"
       >
-        <router-view />
+        <!-- single nested template necessary for fade-transition -->
+        <template>
+          <template v-if="!iexIndex">
+            <v-container fluid>
+              <v-row>
+                <v-col>
+                  <v-sheet class="system-msgs">
+                    <span>
+                      A Stock Index is required. Please use SEARCH above. {{ iexIndex.length }}
+                    </span>
+                  </v-sheet>
+                </v-col>
+              </v-row>
+            </v-container>
+          </template>
+          <template v-else>
+            <template v-if="dataFetching">
+              <v-container fluid>
+                <v-row>
+                  <v-col>
+                    <v-sheet class="system-msgs">
+                      <v-progress-circular
+                        :size="100"
+                        :width="7"
+                        indeterminate
+                      />
+                    </v-sheet>
+                  </v-col>
+                </v-row>
+              </v-container>
+            </template>
+            <template v-else-if="dataFetchError">
+              fetching error...
+            </template>
+            <router-view />
+          </template>
+        </template>
       </v-fade-transition>
     </v-main>
   </v-app>
@@ -46,6 +82,21 @@ import AppBar from './components/app-bar.vue';
     iexIndex: {
       get() {
         return stockModule.iexIndex;
+      },
+    },
+    dataFetching: {
+      get() {
+        return stockModule.dataFetching;
+      },
+    },
+    dataFetchError: {
+      get() {
+        return stockModule.dataFetchError;
+      },
+    },
+    dataFetchErrorMsg: {
+      get() {
+        return stockModule.dataFetchErrorMsg;
       },
     },
   },
@@ -160,4 +211,16 @@ export default class App extends Vue {
 
 <style lang="scss">
   @import './styles/styles.scss';
+
+  .v-sheet {
+    &.system-msgs {
+      text-align: center;
+      margin-top: 50px;
+      color: rgba(0, 0, 0, .5);
+
+      .v-progress-circular {
+        top: 50px;
+      }
+    }
+  }
 </style>
