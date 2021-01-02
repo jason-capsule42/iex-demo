@@ -55,11 +55,17 @@
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
-import IEXCloudClient from 'node-iex-cloud';
 import configModule from '@/store/modules/config';
 import stockModule from '@/store/modules/stock-data';
+import IEXCloudClient from 'node-iex-cloud';
+import * as am4core from '@amcharts/amcharts4/core';
+// eslint-disable-next-line @typescript-eslint/camelcase
+import am4themes_animated from '@amcharts/amcharts4/themes/animated';
 import ModalInitialize from './components/modal-initialize.vue';
 import AppBar from './components/app-bar.vue';
+
+am4core.options.onlyShowOnViewport = true;
+am4core.useTheme(am4themes_animated);
 
 @Component({
   components: {

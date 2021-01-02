@@ -22,10 +22,6 @@ import { Component, Vue } from 'vue-property-decorator';
 import stockModule from '@/store/modules/stock-data';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
-// eslint-disable-next-line @typescript-eslint/camelcase
-import am4themes_animated from '@amcharts/amcharts4/themes/animated';
-
-am4core.useTheme(am4themes_animated);
 
 @Component({
   components: {
