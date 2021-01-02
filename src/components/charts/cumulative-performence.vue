@@ -51,7 +51,6 @@ export default class WidgetCumperf extends Vue {
     for (let i = 0; i < data.length; i += 1) {
       // convert date string to date object to speed up chart perf
       // and enable chart axis grouping
-      const parsedDate = new Date(data[i].date);
 
       let todayPerf = 0;
       let yesterdayPerf = 0;
@@ -70,7 +69,7 @@ export default class WidgetCumperf extends Vue {
         cumulPerfPerc = cumulPerf - 1;
       }
 
-      chartData.push({ date: parsedDate, value: cumulPerfPerc });
+      chartData.push({ date: data[i].date, value: cumulPerfPerc });
 
       this.charts.push(chart);
     }

@@ -61,11 +61,11 @@ export default class App extends Vue {
       && configModule.isSandbox !== undefined
       && stockModule.iexIndex
     ) {
-      // console.warn('all data valid');
+      // all data valid
       stockModule.mutateDataFetchError(false);
       stockModule.mutateDataFetchErrorMsg('');
     } else {
-      // console.warn('invalid data');
+      // invalid data
       stockModule.mutateDataFetchError(true);
       stockModule.mutateDataFetchErrorMsg(
         'Missing or invalid data required to fetch stock information. Please check your config settings.',
@@ -74,6 +74,18 @@ export default class App extends Vue {
     }
 
     return true;
+  }
+
+  fixHistoricalPriceDates(data: any) {
+    const b = this.a;
+
+    for (let i = 0; i < data.length; i += 1) {
+      const parsedDate = new Date(data[i].date);
+
+      Object.assign(data[i], { date: parsedDate });
+    }
+
+    return data;
   }
 
   async getiexSummaryData() {
@@ -95,11 +107,12 @@ export default class App extends Vue {
     stockModule.mutateDataFetching(true);
     stockModule.mutateDataFetchError(false);
     stockModule.mutateDataFetchErrorMsg('');
-    // stockModule.mutateDataFetching(true);
 
     try {
       const historicalPrices = await iexClient.symbol(stockModule.iexIndex).chart('1y', { chartCloseOnly: true });
-      stockModule.mutateIexHistoricalData(JSON.parse(JSON.stringify(historicalPrices, null, 2)));
+      stockModule.mutateIexHistoricalData(
+        this.fixHistoricalPriceDates(JSON.parse(JSON.stringify(historicalPrices, null, 2))),
+      );
 
       const financials = await iexClient.symbol(stockModule.iexIndex).financials('annual'); // Financials
       stockModule.mutateIexFinancialData(JSON.parse(JSON.stringify(financials, null, 2)));
