@@ -19,7 +19,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import IEXCloudClient from 'node-iex-cloud';
+import stockModule from '@/store/modules/stock-data';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4charts from '@amcharts/amcharts4/charts';
 // eslint-disable-next-line @typescript-eslint/camelcase
@@ -27,17 +27,18 @@ import am4themes_animated from '@amcharts/amcharts4/themes/animated';
 
 am4core.useTheme(am4themes_animated);
 
-@Component
+@Component({
+  components: {
+    //
+  },
+  computed: {
+    //
+  },
+})
 export default class WidgetCumperf extends Vue {
-  iexToken = this.$store.state.config.iexToken;
+  charts = new Array<am4core.BaseObject>();
 
-  isSandbox = this.$store.state.config.isSandbox;
-
-  symbol = this.$store.state.analyze.symbol;
-
-  iexSummaryData = '';
-
-  makeSummaryChart(data: any) {
+  makeChart(data: any) {
     const chart = am4core.create(
       this.$refs.chart as HTMLElement,
       am4charts.XYChart,
@@ -70,6 +71,8 @@ export default class WidgetCumperf extends Vue {
       }
 
       chartData.push({ date: parsedDate, value: cumulPerfPerc });
+
+      this.charts.push(chart);
     }
 
     chart.data = chartData;
@@ -104,34 +107,12 @@ export default class WidgetCumperf extends Vue {
     chart.cursor = new am4charts.XYCursor();
   }
 
-  async getiexSummaryData() {
-    this.iexSummaryData = '';
-
-    if (this.iexToken === '') {
-      return;
-    }
-
-    // since the package isn't meant for the browser, work around its funky binding
-    const fetchWrapper = (req: RequestInfo, opts: RequestInit|undefined) => fetch(req, opts);
-
-    const iexClient = new IEXCloudClient(fetchWrapper, {
-      sandbox: this.isSandbox,
-      publishable: this.iexToken,
-      version: 'stable',
-    });
-
-    const historicalPrices = await iexClient.symbol(this.symbol).chart('1y', { chartCloseOnly: true });
-    // Get data without a client:
-    //   const resp = await fetch(`https://cloud.iexapis.com/stable/stock/aapl/chart/1y?token=${this.iexToken}`);
-    //   const data = await resp.json();
-
-    this.iexSummaryData = JSON.stringify(historicalPrices, null, 2);
-
-    this.makeSummaryChart(historicalPrices);
+  mounted() {
+    this.makeChart(stockModule.iexHistoricalPricesData);
   }
 
-  mounted() {
-    this.getiexSummaryData();
+  beforeDestroy() {
+    this.charts.forEach((chart) => { chart.dispose(); });
   }
 }
 </script>

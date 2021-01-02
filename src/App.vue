@@ -1,16 +1,14 @@
 <template>
   <v-app>
-    <AppBar />
+    <app-bar v-if="$store.state.config.isInitialized" />
     <v-main>
       <modal-initialize v-if="!$store.state.config.isInitialized" />
-      <v-container
+      <v-fade-transition
         v-else
-        fluid
+        :hide-on-leave="true"
       >
-        <v-fade-transition :hide-on-leave="true">
-          <router-view />
-        </v-fade-transition>
-      </v-container>
+        <router-view />
+      </v-fade-transition>
     </v-main>
   </v-app>
 </template>
@@ -29,7 +27,7 @@ import AppBar from './components/app-bar.vue';
     AppBar,
   },
   props: {
-    // iexTokenValue: {},
+    //
   },
   data: () => ({
     //
@@ -101,13 +99,19 @@ export default class App extends Vue {
 
     try {
       const historicalPrices = await iexClient.symbol(stockModule.iexIndex).chart('1y', { chartCloseOnly: true });
-      stockModule.mutateIexHistoricalData(JSON.stringify(historicalPrices, null, 2));
+      stockModule.mutateIexHistoricalData(JSON.parse(JSON.stringify(historicalPrices, null, 2)));
+
+      const financials = await iexClient.symbol(stockModule.iexIndex).financials('annual'); // Financials
+      stockModule.mutateIexFinancialData(JSON.parse(JSON.stringify(financials, null, 2)));
 
       const companyData = await iexClient.symbol(stockModule.iexIndex).company();
-      stockModule.mutateIexCompanyData(JSON.stringify(companyData, null, 2));
+      stockModule.mutateIexCompanyData(JSON.parse(JSON.stringify(companyData, null, 2)));
+      // JSON.stringify(companyData, null, 2)
 
       const newsData = await iexClient.symbol(stockModule.iexIndex).news();
-      stockModule.mutateIexNewsData(JSON.stringify(newsData, null, 2));
+      stockModule.mutateIexNewsData(JSON.parse(JSON.stringify(newsData, null, 2)));
+
+      // TODO: need to do some handling for a lack of error but empty data results
     } catch (e) {
       // TODO: improve the error handling here. Each fetch should log its owmn error
       // including the actual error response
@@ -120,26 +124,22 @@ export default class App extends Vue {
 
   async fetchStockData() {
     if (this.checkFetchReadiness()) {
-      console.warn('ready to fetch stocks');
       this.getiexSummaryData();
     }
   }
 
   @Watch('iexToken')
-  onIexTokenChange(value: string, oldValue: string) {
-    console.warn('testing IexToken change', this.a, value, oldValue);
+  onIexTokenChange() {
     this.fetchStockData();
   }
 
   @Watch('isSandbox')
-  onIsSandboxChange(value: string, oldValue: string) {
-    console.warn('testing isSandbox change', this.a, value, oldValue);
+  onIsSandboxChange() {
     this.fetchStockData();
   }
 
   @Watch('iexIndex')
-  onIexIndexChange(value: string, oldValue: string) {
-    console.warn('testing iexIndex change', this.a, value, oldValue);
+  onIexIndexChange() {
     this.fetchStockData();
   }
 }

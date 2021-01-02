@@ -23,7 +23,9 @@ class IndexModule extends VuexModule {
 
   iexHistoricalPricesData = '';
 
-  iexCompanyData = '';
+  iexFinancialData = {};
+
+  iexCompanyData = {};
 
   iexNewsData = '';
 
@@ -50,6 +52,11 @@ class IndexModule extends VuexModule {
   @Mutation
   mutateIexHistoricalData(value: string) {
     this.iexHistoricalPricesData = value;
+  }
+
+  @Mutation
+  mutateIexFinancialData(value: string) {
+    this.iexFinancialData = value;
   }
 
   @Mutation
