@@ -15,9 +15,51 @@ import store from '@/store';
 class IndexModule extends VuexModule {
   iexIndex = '';
 
+  dataFetching = false;
+
+  dataFetchError = false;
+
+  dataFetchErrorMsg = '';
+
+  iexHistoricalPricesData = '';
+
+  iexCompanyData = '';
+
+  iexNewsData = '';
+
   @Mutation
   mutateIexIndex(value: string) {
     this.iexIndex = value;
+  }
+
+  @Mutation
+  mutateDataFetching(value: boolean) {
+    this.dataFetching = value;
+  }
+
+  @Mutation
+  mutateDataFetchError(value: boolean) {
+    this.dataFetchError = value;
+  }
+
+  @Mutation
+  mutateDataFetchErrorMsg(value: string) {
+    this.dataFetchErrorMsg = value;
+  }
+
+  @Mutation
+  mutateIexHistoricalData(value: string) {
+    this.iexHistoricalPricesData = value;
+  }
+
+  @Mutation
+  mutateIexCompanyData(value: string) {
+    this.iexCompanyData = value;
+  }
+
+  @Mutation
+  mutateIexNewsData(value: string) {
+    this.iexNewsData = value;
   }
 }
 

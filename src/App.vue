@@ -16,7 +16,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
+import IEXCloudClient from 'node-iex-cloud';
+import configModule from '@/store/modules/config';
+import stockModule from '@/store/modules/stock-data';
 import ModalInitialize from './components/modal-initialize.vue';
 import AppBar from './components/app-bar.vue';
 
@@ -25,8 +28,121 @@ import AppBar from './components/app-bar.vue';
     ModalInitialize,
     AppBar,
   },
+  props: {
+    // iexTokenValue: {},
+  },
+  data: () => ({
+    //
+  }),
+  computed: {
+    iexToken: {
+      get() {
+        return `${configModule.iexToken}`;
+      },
+    },
+    isSandbox: {
+      get() {
+        return configModule.isSandbox;
+      },
+    },
+    iexIndex: {
+      get() {
+        return stockModule.iexIndex;
+      },
+    },
+  },
 })
-export default class App extends Vue {}
+export default class App extends Vue {
+  a = '';
+
+  checkFetchReadiness() {
+    const b = this.a; // why do I have to do this to fix eslint error?
+
+    if (configModule.iexToken
+      && configModule.isSandbox !== null
+      && configModule.isSandbox !== undefined
+      && stockModule.iexIndex
+    ) {
+      // console.warn('all data valid');
+      stockModule.mutateDataFetchError(false);
+      stockModule.mutateDataFetchErrorMsg('');
+    } else {
+      // console.warn('invalid data');
+      stockModule.mutateDataFetchError(true);
+      stockModule.mutateDataFetchErrorMsg(
+        'Missing or invalid data required to fetch stock information. Please check your config settings.',
+      );
+      return false;
+    }
+
+    return true;
+  }
+
+  async getiexSummaryData() {
+    const b = this.a;
+
+    // since the package isn't meant for the browser, work around its funky binding
+    const fetchWrapper = (req: RequestInfo, opts: RequestInit|undefined) => fetch(req, opts);
+
+    const iexClient = new IEXCloudClient(fetchWrapper, {
+      sandbox: configModule.isSandbox,
+      publishable: configModule.iexToken,
+      version: 'stable',
+    });
+
+    // Get data without a client:
+    //   const resp = await fetch(`https://cloud.iexapis.com/stable/stock/aapl/chart/1y?token=${this.iexToken}`);
+    //   const data = await resp.json();
+
+    stockModule.mutateDataFetching(true);
+    stockModule.mutateDataFetchError(false);
+    stockModule.mutateDataFetchErrorMsg('');
+    // stockModule.mutateDataFetching(true);
+
+    try {
+      const historicalPrices = await iexClient.symbol(stockModule.iexIndex).chart('1y', { chartCloseOnly: true });
+      stockModule.mutateIexHistoricalData(JSON.stringify(historicalPrices, null, 2));
+
+      const companyData = await iexClient.symbol(stockModule.iexIndex).company();
+      stockModule.mutateIexCompanyData(JSON.stringify(companyData, null, 2));
+
+      const newsData = await iexClient.symbol(stockModule.iexIndex).news();
+      stockModule.mutateIexNewsData(JSON.stringify(newsData, null, 2));
+    } catch (e) {
+      // TODO: improve the error handling here. Each fetch should log its owmn error
+      // including the actual error response
+      stockModule.mutateDataFetchError(true);
+      stockModule.mutateDataFetchErrorMsg('Failed to get stock data from server');
+    }
+
+    stockModule.mutateDataFetching(false);
+  }
+
+  async fetchStockData() {
+    if (this.checkFetchReadiness()) {
+      console.warn('ready to fetch stocks');
+      this.getiexSummaryData();
+    }
+  }
+
+  @Watch('iexToken')
+  onIexTokenChange(value: string, oldValue: string) {
+    console.warn('testing IexToken change', this.a, value, oldValue);
+    this.fetchStockData();
+  }
+
+  @Watch('isSandbox')
+  onIsSandboxChange(value: string, oldValue: string) {
+    console.warn('testing isSandbox change', this.a, value, oldValue);
+    this.fetchStockData();
+  }
+
+  @Watch('iexIndex')
+  onIexIndexChange(value: string, oldValue: string) {
+    console.warn('testing iexIndex change', this.a, value, oldValue);
+    this.fetchStockData();
+  }
+}
 </script>
 
 <style lang="scss">
