@@ -3,48 +3,52 @@
     <app-bar v-if="$store.state.config.isInitialized" />
     <v-main>
       <modal-initialize v-if="!$store.state.config.isInitialized" />
-      <v-fade-transition
-        v-else
-        :hide-on-leave="true"
-      >
-        <!-- single nested template necessary for fade-transition -->
-        <template>
-          <template v-if="!iexIndex">
+      <template v-else>
+        <template v-if="!iexIndex">
+          <v-container fluid>
+            <v-row>
+              <v-col>
+                <v-sheet class="system-msgs">
+                  <span>
+                    A Stock Index is required. Please use SEARCH above.
+                  </span>
+                </v-sheet>
+              </v-col>
+            </v-row>
+          </v-container>
+        </template>
+        <template v-else>
+          <template v-if="dataFetching">
             <v-container fluid>
               <v-row>
                 <v-col>
                   <v-sheet class="system-msgs">
-                    <span>
-                      A Stock Index is required. Please use SEARCH above. {{ iexIndex.length }}
-                    </span>
+                    <v-progress-circular
+                      :size="100"
+                      :width="7"
+                      indeterminate
+                    />
                   </v-sheet>
                 </v-col>
               </v-row>
             </v-container>
           </template>
-          <template v-else>
-            <template v-if="dataFetching">
-              <v-container fluid>
-                <v-row>
-                  <v-col>
-                    <v-sheet class="system-msgs">
-                      <v-progress-circular
-                        :size="100"
-                        :width="7"
-                        indeterminate
-                      />
-                    </v-sheet>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </template>
-            <template v-else-if="dataFetchError">
-              fetching error...
-            </template>
-            <router-view />
+          <template v-else-if="dataFetchError">
+            <v-container fluid>
+              <v-row>
+                <v-col>
+                  <v-sheet class="system-msgs">
+                    <p class="error-msg">
+                      {{ dataFetchErrorMsg ? dataFetchErrorMsg : 'error fetching stock data' }}
+                    </p>
+                  </v-sheet>
+                </v-col>
+              </v-row>
+            </v-container>
           </template>
+          <router-view v-else />
         </template>
-      </v-fade-transition>
+      </template>
     </v-main>
   </v-app>
 </template>
@@ -220,6 +224,10 @@ export default class App extends Vue {
 
       .v-progress-circular {
         top: 50px;
+      }
+
+      .error-msg {
+        color: red;
       }
     }
   }

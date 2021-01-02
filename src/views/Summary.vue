@@ -164,16 +164,6 @@ export default class Summary extends Vue {}
 </script>
 
 <style lang="scss" scoped>
-  .system-msgs {
-    text-align: center;
-    margin-top: 50px;
-    color: rgba(0, 0, 0, .5);
-
-    .v-progress-circular {
-      top: 50px;
-    }
-  }
-
   .closingPrice {
     font-size: 2em;
     font-weight: 700;
