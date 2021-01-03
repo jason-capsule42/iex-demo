@@ -114,27 +114,42 @@ am4core.useTheme(am4themes_animated);
 export default class App extends Vue {
   a = '';
 
+  async validateStockIndex() {
+    const resp = await fetch(`https://cloud.iexapis.com/stable/ref-data/symbols?token=${this.iexToken}`);
+    const allIndexes = await resp.json();
+
+    for (let i = 0; i < allIndexes.length; i += 1) {
+      if (allIndexes[i].symbol.toLowerCase() === stockModule.iexIndex.toLowerCase()) {
+        return true;
+      }
+    }
+
+    stockModule.mutateDataFetchError(true);
+    stockModule.mutateDataFetchErrorMsg('Invalid stock symbol');
+
+    return false;
+  }
+
   checkFetchReadiness() {
-    const b = this.a; // why do I have to do this to fix eslint error?
+    stockModule.mutateDataFetchError(false);
+    stockModule.mutateDataFetchErrorMsg('');
 
     if (configModule.iexToken
       && configModule.isSandbox !== null
       && configModule.isSandbox !== undefined
       && stockModule.iexIndex
     ) {
-      // all data valid
-      stockModule.mutateDataFetchError(false);
-      stockModule.mutateDataFetchErrorMsg('');
+      if (this.validateStockIndex()) {
+        return true;
+      }
     } else {
-      // invalid data
       stockModule.mutateDataFetchError(true);
       stockModule.mutateDataFetchErrorMsg(
         'Missing or invalid data required to fetch stock information. Please check your config settings.',
       );
-      return false;
     }
 
-    return true;
+    return false;
   }
 
   fixHistoricalPriceDates(data: any) {
@@ -150,8 +165,6 @@ export default class App extends Vue {
   }
 
   async getiexSummaryData() {
-    const b = this.a;
-
     // since the package isn't meant for the browser, work around its funky binding
     const fetchWrapper = (req: RequestInfo, opts: RequestInit|undefined) => fetch(req, opts);
 
@@ -161,9 +174,9 @@ export default class App extends Vue {
       version: 'stable',
     });
 
-    // Get data without a client:
-    //   const resp = await fetch(`https://cloud.iexapis.com/stable/stock/aapl/chart/1y?token=${this.iexToken}`);
-    //   const data = await resp.json();
+    // // Get data without a client:
+    // //   const resp = await fetch(`https://cloud.iexapis.com/stable/stock/aapl/chart/1y?token=${this.iexToken}`);
+    // //   const data = await resp.json();
 
     stockModule.mutateDataFetching(true);
     stockModule.mutateDataFetchError(false);
@@ -187,7 +200,7 @@ export default class App extends Vue {
 
       // TODO: need to do some handling for a lack of error but empty data results
     } catch (e) {
-      // TODO: improve the error handling here. Each fetch should log its owmn error
+      // TODO: improve the error handling here. Each fetch should log its own error
       // including the actual error response
       stockModule.mutateDataFetchError(true);
       stockModule.mutateDataFetchErrorMsg('Failed to get stock data from server');
