@@ -88,21 +88,23 @@ export default class WidgetCumperf extends Vue {
     series.dataFields.valueY = 'value';
     series.dataFields.dateX = 'date';
     series.strokeWidth = 1;
+    series.fillOpacity = 0.3;
 
     // add bullet
     const bullet = series.bullets.push(new am4charts.Bullet());
-    bullet.tooltipText = '{valueY}';
+    bullet.tooltipText = '{valueY}%';
 
     const range = valueAxis.createSeriesRange(series);
     range.value = 0;
     range.endValue = -1000;
     range.contents.stroke = am4core.color('#FF0000');
     range.contents.fill = range.contents.stroke;
+    range.contents.fillOpacity = 0.3;
 
     // Add scrollbar
-    const scrollbarX = new am4charts.XYChartScrollbar();
-    scrollbarX.series.push(series);
-    chart.scrollbarX = scrollbarX;
+    // const scrollbarX = new am4charts.XYChartScrollbar();
+    // scrollbarX.series.push(series);
+    // chart.scrollbarX = scrollbarX;
 
     chart.cursor = new am4charts.XYCursor();
   }
