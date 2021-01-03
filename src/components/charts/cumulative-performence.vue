@@ -44,28 +44,33 @@ export default class WidgetCumperf extends Vue {
 
     const chartData = [];
 
-    for (let i = 0; i < data.length; i += 1) {
-      // convert date string to date object to speed up chart perf
-      // and enable chart axis grouping
+    let todayPerf = 0;
+    let yesterdayPerf = 0;
+    let yesterdayCumulPerf = 0;
+    let cumulPerf = 0;
+    let cumulPerfPerc = 0;
 
-      let todayPerf = 0;
-      let yesterdayPerf = 0;
-      let cumulPerf = 0;
-      let cumulPerfPerc = 0;
+    for (let i = 0; i < data.length; i += 1) {
+      yesterdayPerf = todayPerf;
 
       if (i > 0) {
         todayPerf = data[i].close / data[i - 1].close;
+
+        if (i > 1) {
+          yesterdayCumulPerf = cumulPerf;
+          cumulPerf = yesterdayCumulPerf * todayPerf;
+        } else {
+          cumulPerf = todayPerf;
+        }
+
+        if (i > 0) {
+          cumulPerfPerc = cumulPerf - 1;
+        }
       }
 
-      if (i > 1) {
-        yesterdayPerf = data[i - 1].close / data[i - 2].close;
-
-        cumulPerf = todayPerf * yesterdayPerf;
-
-        cumulPerfPerc = cumulPerf - 1;
+      if (i > 0) {
+        chartData.push({ date: data[i].date, value: cumulPerfPerc }); // cumulPerfPerc
       }
-
-      chartData.push({ date: data[i].date, value: cumulPerfPerc });
 
       this.charts.push(chart);
     }
