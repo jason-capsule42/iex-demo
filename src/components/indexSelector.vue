@@ -12,6 +12,8 @@
     hide-no-data
     :disabled="disabled"
     color="gray"
+    autofocus
+    @blur="completeSearch"
   >
     <template v-slot:item="{ item }">
       <v-list-item-content>
@@ -77,10 +79,13 @@ export default class IndexSearch extends Vue {
       });
   }
 
-  updateIexIndex(index: string) {
-    const a = this.$data.model; // TODO: still need to understand the 'this' requirement
-    stockModule.mutateIexIndex(index);
+  completeSearch() {
     this.$emit('search-complete');
+  }
+
+  updateIexIndex(index: string) {
+    stockModule.mutateIexIndex(index);
+    this.completeSearch();
   }
 
   @Watch('iexToken')
@@ -101,10 +106,6 @@ export default class IndexSearch extends Vue {
 </script>
 
 <style lang="scss">
-  .indexSearch {
-    // width: 100px;
-  }
-
   .indexSearchListItem {
     display: flex;
     flex-direction: row;
