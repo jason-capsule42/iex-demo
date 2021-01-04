@@ -29,7 +29,7 @@
             <!-- TODO: this needs to be improved to disable if the form has errors -->
             <v-btn
               color="success"
-              :disabled="!iexIndex || !iexToken || isSandbox === null || isSandbox === undefined"
+              :disabled="!iexToken || isSandbox === null || isSandbox === undefined"
               @click="initialize"
             >
               close
