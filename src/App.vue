@@ -4,7 +4,7 @@
     <v-main>
       <modal-initialize v-if="!$store.state.config.isInitialized" />
       <template v-else>
-        <template v-if="!iexIndex">
+        <template v-if="!iexIndex && $route.name !== 'Config'">
           <v-container fluid>
             <v-row>
               <v-col>
@@ -33,7 +33,7 @@
               </v-row>
             </v-container>
           </template>
-          <template v-else-if="dataFetchError">
+          <template v-else-if="dataFetchError && $route.name !== 'Config'">
             <v-container fluid>
               <v-row>
                 <v-col>
