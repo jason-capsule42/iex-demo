@@ -49,7 +49,6 @@ import stockModule from '@/store/modules/stock-data';
   computed: {
     iextoken: {
       get() {
-        console.warn('fdjhkafjdsalk');
         return configModule.iexToken;
       },
     },
@@ -90,7 +89,6 @@ export default class IndexSearch extends Vue {
 
   @Watch('iexToken')
   onIexTokenChange() {
-    console.warn('token changed');
     if (stockModule.iexIndex) {
       this.$data.disabled = false;
     } else {
