@@ -20,15 +20,6 @@
             v-model.lazy="isSandbox"
             label="Is Sandbox"
           />
-          <v-text-field
-            v-model="iexIndex"
-            label="Stock Index"
-            placeholder="Enter an initial stock IEX Index"
-            clearable
-            dense
-            maxlength="5"
-            required
-          />
         </v-form>
       </v-col>
     </v-row>
@@ -38,14 +29,11 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import configModule from '@/store/modules/config';
-import stockModule from '@/store/modules/stock-data';
+import IndexSearch from './indexSelector.vue';
 
 @Component({
   components: {
-    //
-  },
-  props: {
-    // iexTokenValue: {},
+    IndexSearch,
   },
   data: () => ({
     //
@@ -67,20 +55,7 @@ import stockModule from '@/store/modules/stock-data';
         configModule.mutateSandbox(value);
       },
     },
-    iexIndex: {
-      get() {
-        return stockModule.iexIndex;
-      },
-      set(value) {
-        stockModule.mutateIexIndex(value);
-      },
-    },
   },
-  // watch: {
-  //   localIexTokenValue(val) {
-  //     this.$emit('input', val);
-  //   },
-  // },
 })
 export default class FormConfig extends Vue {
   tokenRules = [
