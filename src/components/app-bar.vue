@@ -15,6 +15,7 @@
     <v-btn
       color="transparent"
       elevation="0"
+      small
       @click="searchActive = true"
     >
       <v-icon
