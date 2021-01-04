@@ -4,7 +4,7 @@
     app
   >
     <v-toolbar-title>
-      <v-icon>
+      <v-icon left>
         mdi-chart-areaspline
       </v-icon>
       <span class="d-none d-sm-flex">
@@ -18,26 +18,15 @@
       @click="searchActive = true"
     >
       <v-icon
+        v-if="!searchActive"
         small
-        left
       >
         mdi-magnify
       </v-icon>
-      <span v-if="!searchActive">
-        search
-      </span>
-      <v-text-field
-        v-else
-        v-model="iexIndex"
+      <index-selector
+        v-if="searchActive"
         class="indexSearch"
-        placeholder="index"
-        clearable
-        dense
-        autofocus
-        maxlength="5"
-        :hide-details="true"
-        @keydown.enter="searchActive = false"
-        @blur="searchActive = false"
+        @search-complete="searchActive = false"
       />
     </v-btn>
     <v-list class="nav-menu">
@@ -57,7 +46,8 @@
               v-text="item.icon"
             />
             <v-icon
-              left
+              small
+              :left="item.title != ''"
               class="d-none d-md-flex"
               v-text="item.icon"
             />
@@ -116,12 +106,12 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-// import StockModule from '@/store/modules/index';
 import stockModule from '@/store/modules/stock-data';
+import indexSelector from './indexSelector.vue';
 
 @Component({
   components: {
-    //
+    indexSelector,
   },
   props: {
     //
@@ -161,7 +151,7 @@ export default class App extends Vue {
       icon: 'mdi-chart-box',
     },
     {
-      title: 'Config',
+      title: '',
       link: '/config',
       icon: 'mdi-cog',
     },
@@ -180,40 +170,21 @@ export default class App extends Vue {
 </script>
 
 <style lang="scss" scoped>
-  .indexSearch {
-    width: 100px;
-  }
-
   .v-btn {
     margin-left: 5px;
   }
 
   .v-toolbar__title {
     display: flex;
-
-    .v-icon {
-      margin-right: 5px;
-    }
-  }
-
-  .v-card__text {
-    width: 139px;
   }
 
   .v-list {
     &.nav-menu {
       display: flex;
+
       &.theme--light {
         background-color: unset;
         color: unset;
-      }
-    }
-  }
-
-  .v-application--is-ltr {
-    div.v-list-item__icon {
-      &:first-child {
-        margin-right: 5px;
       }
     }
   }
