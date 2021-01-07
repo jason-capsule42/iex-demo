@@ -1,1 +1,14 @@
+@import './variables';
 @import './utilities';
+
+.v-application.theme--light {
+  .primary {
+    border-color: $color-primary !important;
+    background-color: $color-primary !important;
+  }
+
+  .accent {
+    border-color: $color-primary !important;
+    background-color: $color-primary !important;
+  }
+}
