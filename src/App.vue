@@ -46,7 +46,7 @@
               </v-row>
             </v-container>
           </template>
-          <router-view v-else />
+          <router-view />
         </template>
       </template>
     </v-main>
@@ -198,6 +198,10 @@ export default class App extends Vue {
       const newsData = await iexClient.symbol(stockModule.iexIndex).news();
       stockModule.mutateIexNewsData(JSON.parse(JSON.stringify(newsData, null, 2)));
 
+      const quote = await iexClient.symbol(stockModule.iexIndex).ohlc(); // Open/Close/High/Low/Bid/Volume/etc.
+      console.warn('quote', quote);
+      stockModule.mutateIexQuoteData(JSON.parse(JSON.stringify(quote, null, 2)));
+
       // TODO: need to do some handling for a lack of error but empty data results
     } catch (e) {
       // TODO: improve the error handling here. Each fetch should log its own error
@@ -237,8 +241,10 @@ export default class App extends Vue {
 
   .v-sheet {
     &.system-msgs {
-      text-align: center;
       margin-top: 50px;
+
+      text-align: center;
+
       color: rgba(0, 0, 0, .5);
 
       .v-progress-circular {
@@ -250,4 +256,5 @@ export default class App extends Vue {
       }
     }
   }
+
 </style>
