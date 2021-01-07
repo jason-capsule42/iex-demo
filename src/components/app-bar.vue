@@ -13,17 +13,20 @@
     </v-toolbar-title>
     <v-spacer />
     <v-btn
+      :class="{'active': searchActive}"
       color="transparent"
       elevation="0"
-      small
       @click="searchActive = true"
     >
       <v-icon
-        v-if="!searchActive"
         small
+        left
       >
         mdi-magnify
       </v-icon>
+      <span v-if="!searchActive">
+        SEARCH
+      </span>
       <index-selector
         v-if="searchActive"
         class="indexSearch"

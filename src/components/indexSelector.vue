@@ -1,25 +1,26 @@
 <template>
   <v-autocomplete
     v-model="model"
+    :disabled="disabled"
     :items="items"
+    :search-input.sync="search"
+    :filter="filterObject"
+    :hide-details="true"
+    item-text="name"
+    placeholder="Index Search"
+    background-color="transparent"
+    color="gray"
+    return-object
     dense
     clearable
-    placeholder="Index Search"
-    :hide-details="true"
-    :search-input.sync="search"
-    return-object
-    item-text="name"
     hide-no-data
-    :disabled="disabled"
-    color="gray"
     autofocus
     @blur="completeSearch"
   >
     <template v-slot:item="{ item }">
-      <v-list-item-content>
+      <v-list-item-content @click="updateIexIndex(item.symbol)">
         <div
           class="indexSearchListItem"
-          @click="updateIexIndex(item.symbol)"
         >
           <div class="indexSearchListItem-symbol">
             {{ item.symbol }}
@@ -78,6 +79,15 @@ export default class IndexSearch extends Vue {
       });
   }
 
+  filterObject(item: any, queryText: any) {
+    const a = this.$data.isLoading;
+
+    return (
+      item.symbol.toLocaleLowerCase().indexOf(queryText.toLocaleLowerCase()) > -1
+      || item.name.toLocaleLowerCase().indexOf(queryText.toLocaleLowerCase()) > -1
+    );
+  }
+
   completeSearch() {
     this.$emit('search-complete');
   }
@@ -107,6 +117,7 @@ export default class IndexSearch extends Vue {
   .indexSearchListItem {
     display: flex;
     flex-direction: row;
+    height: 100%;
   }
 
   .indexSearchListItem-symbol {
