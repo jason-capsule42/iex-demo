@@ -23,15 +23,19 @@ class IndexModule extends VuexModule {
 
   iexHistoricalPricesData = [];
 
+  latestPriceData = {};
+
   iexFinancialData = [];
 
   iexCompanyData = [];
 
   iexNewsData = '';
 
-  get currentClosingPrice() {
+  iexQuoteData = [];
+
+  get currentClosingData() {
     const lastEntry = this.iexHistoricalPricesData[this.iexHistoricalPricesData.length - 1];
-    return JSON.parse(JSON.stringify(lastEntry)).close;
+    return JSON.parse(JSON.stringify(lastEntry));
   }
 
   get currentChangePrice() {
@@ -83,6 +87,11 @@ class IndexModule extends VuexModule {
   @Mutation
   mutateIexNewsData(value: string) {
     this.iexNewsData = value;
+  }
+
+  @Mutation
+  mutateIexQuoteData(value: object) {
+    this.iexQuoteData = value;
   }
 }
 
