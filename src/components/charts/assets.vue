@@ -1,20 +1,33 @@
 <template>
-  <div
-    ref="chart"
-    class="fill-height"
-    align="center"
-    justify="center"
-  >
-    <div
-      class="fill-height"
-    >
-      <v-progress-circular
-        :size="100"
-        :width="7"
-        indeterminate
-      />
-    </div>
-  </div>
+  <v-container>
+    <v-row class="headerRow">
+      <v-col>
+        <h3>
+          Company Assets
+        </h3>
+      </v-col>
+    </v-row>
+    <v-row class="contentRow">
+      <v-col>
+        <div
+          ref="chart"
+          class="fill-height"
+          align="center"
+          justify="center"
+        >
+          <div
+            class="fill-height"
+          >
+            <v-progress-circular
+              :size="100"
+              :width="7"
+              indeterminate
+            />
+          </div>
+        </div>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -75,4 +88,14 @@ export default class WidgetCumperf extends Vue {
 </script>
 
 <style lang="scss" scoped>
+  .headerRow {
+    height: 60px;
+    margin-right: 0;
+    margin-left: 0;
+  }
+
+  .contentRow {
+    height: 100%;
+  }
+
 </style>

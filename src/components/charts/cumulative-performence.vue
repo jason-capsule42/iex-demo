@@ -1,8 +1,13 @@
 <template>
-  <v-sheet
-    class="fill-height"
+  <v-container
+    class="fill-height chartCumulPerf"
   >
-    <v-row>
+    <v-row class="headerRow">
+      <v-col>
+        <h3>
+          Cumulative Performance
+        </h3>
+      </v-col>
       <v-col class="dateCol">
         <span class="rangeLabel">
           Date Range:
@@ -60,7 +65,7 @@
       ref="chart"
       align="center"
       justify="center"
-      class="fill-height"
+      class="fill-height chartWrapper"
     >
       <div
         class="fill-height"
@@ -72,7 +77,7 @@
         />
       </div>
     </div>
-  </v-sheet>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -113,13 +118,13 @@ export default class WidgetCumperf extends Vue {
     const chartData = [];
 
     let todayPerf = 0;
-    let yesterdayPerf = 0;
+    // let yesterdayPerf = 0;
     let yesterdayCumulPerf = 0;
     let cumulPerf = 0;
     let cumulPerfPerc = 0;
 
     for (let i = 0; i < data.length; i += 1) {
-      yesterdayPerf = todayPerf;
+      // yesterdayPerf = todayPerf;
 
       if (i > 0) {
         todayPerf = data[i].close / data[i - 1].close;
@@ -233,33 +238,70 @@ export default class WidgetCumperf extends Vue {
 </script>
 
 <style lang="scss" scoped>
+  @import '../../styles/_variables.scss';
+
   .v-list {
     padding: 0 0 0 0;
   }
 
+  .chartWrapper {
+    width: 100%;
+  }
+
+  .headerRow {
+    height: 60px;
+    margin-right: 0;
+    margin-left: 0;
+  }
+
   .dateCol {
     display: flex;
-    flex-direction: row;
     align-items: center;
-    margin-bottom: 10px;
+    flex-direction: row;
     justify-content: flex-end;
-    padding-right: 30px;
+
+    margin-bottom: 10px;
   }
 
   .v-btn:not(.v-btn--round).v-size--default {
     height: unset;
-    padding: 3px 6px;
     margin-left: 5px;
+    padding: 3px 6px;
+
+    font-size: .8em;
+
+    color: rgba(0, 0, 0, .5);
+    border-width: 1px;
+    border-style: solid;
+    border-color: $border-color !important;
+    border-radius: 0;
+    background-color: rgba(0, 0, 0, .05) !important;
   }
 
   .rangeLabel {
     font-size: .8em;
-    white-space: nowrap;
     font-weight: bold;
+
+    white-space: nowrap;
   }
 
   .divider {
-    font-size: .8em;
     margin-left: 5px;
+
+    font-size: .8em;
   }
+
+  .v-menu__content,
+  .v-sheet.v-card {
+    border-radius: 0;
+  }
+
+  .v-list {
+    border-radius: 0;
+  }
+
+  .v-picker {
+    border-radius: 0;
+  }
+
 </style>
