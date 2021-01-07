@@ -1,37 +1,43 @@
 <template>
-  <v-autocomplete
-    v-model="model"
-    :disabled="disabled"
-    :items="items"
-    :search-input.sync="search"
-    :filter="filterObject"
-    :hide-details="true"
-    item-text="name"
-    placeholder="Index Search"
-    background-color="transparent"
-    color="gray"
-    return-object
-    dense
-    clearable
-    hide-no-data
-    autofocus
-    @blur="completeSearch"
-  >
-    <template v-slot:item="{ item }">
-      <v-list-item-content @click="updateIexIndex(item.symbol)">
-        <div
-          class="indexSearchListItem"
-        >
-          <div class="indexSearchListItem-symbol">
-            {{ item.symbol }}
+  <div class="searchWrapper">
+    <v-autocomplete
+      v-model="model"
+      :disabled="disabled"
+      :items="items"
+      :search-input.sync="search"
+      :filter="filterObject"
+      :hide-details="true"
+      no-data-text="Begin typing to search"
+      item-text="name"
+      placeholder="Quote Lookup"
+      background-color="transparent"
+      color="gray"
+      return-object
+      dense
+      clear-icon="mdi-magnify"
+      @blur="completeSearch"
+    >
+      <template v-slot:item="{ item }">
+        <v-list-item-content @click="updateIexIndex(item.symbol)">
+          <div
+            class="indexSearchListItem"
+          >
+            <div class="indexSearchListItem-symbol">
+              {{ item.symbol }}
+            </div>
+            <div class="indexSearchListItem-name">
+              {{ item.name }}
+            </div>
           </div>
-          <div class="indexSearchListItem-name">
-            {{ item.name }}
-          </div>
-        </div>
-      </v-list-item-content>
-    </template>
-  </v-autocomplete>
+        </v-list-item-content>
+      </template>
+    </v-autocomplete>
+    <div class="customIcon">
+      <v-icon>
+        mdi-magnify
+      </v-icon>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -114,10 +120,92 @@ export default class IndexSearch extends Vue {
 </script>
 
 <style lang="scss">
+  @import '../styles/_variables.scss';
+
+  .searchWrapper {
+    height: 31px;
+
+    .v-text-field.v-input--dense:not(.v-text-field--outlined) input[type='text'] {
+      padding: 3px 10px;
+
+      font-size: .9em;
+      line-height: 25px;
+    }
+
+    .v-text-field {
+      margin-top: 0;
+    }
+
+    .v-text-field div.v-input__append-inner {
+      display: none;
+    }
+
+    .v-input__slot {
+      &:before,
+      &:after {
+        display: none;
+      }
+    }
+  }
+
+  .v-menu__content {
+    max-width: 300px !important;
+
+    transform: translateY(5px);
+
+    border-width: 1px;
+    border-style: solid;
+    border-color: $border-color;
+  }
+
   .indexSearchListItem {
     display: flex;
     flex-direction: row;
+
+    width: 100%;
     height: 100%;
+  }
+
+</style>
+
+<style lang="scss" scoped>
+  $border-color: rgba(0, 0, 0, .6);
+
+  .searchWrapper {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .v-input {
+    flex: 1;
+  }
+
+  .customIcon {
+    position: absolite;
+    top: 0;
+    right: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 5px;
+
+    background-color: $border-color;
+
+    i {
+      color: white;
+    }
+  }
+
+  .indexSearch {
+    border-width: 1px;
+    border-style: solid;
+    border-color: $border-color;
+  }
+
+  .v-list.v-select-list {
+    padding: 0;
   }
 
   .indexSearchListItem-symbol {
@@ -125,9 +213,12 @@ export default class IndexSearch extends Vue {
   }
 
   .indexSearchListItem-name {
-    width: 415px;
     overflow: hidden;
+
+    width: calc(100% - 80px);
+
     white-space: nowrap;
     text-overflow: ellipsis;
   }
+
 </style>
