@@ -187,8 +187,8 @@ export default class App extends Vue {
       display: flex;
 
       &.theme--light {
-        background-color: unset;
         color: unset;
+        background-color: unset;
       }
     }
   }
@@ -196,6 +196,7 @@ export default class App extends Vue {
   .v-list-item {
     &.nav-bar-link {
       flex: unset;
+
       padding: 0;
 
       .v-btn {
@@ -203,23 +204,26 @@ export default class App extends Vue {
 
         &.active {
           &:before {
-            background-color: rgba(0, 0, 0, 0.87);
-            background-color: currentColor;
-            border-radius: inherit;
-            bottom: 0;
-            color: inherit;
-            content: "";
-            left: 0;
-            opacity: 0;
-            pointer-events: none;
             position: absolute;
-            right: 0;
             top: 0;
-            transition: opacity 0.2s cubic-bezier(0.4, 0, 0.6, 1);
-            opacity: 0.08;
+            right: 0;
+            bottom: 0;
+            left: 0;
+
+            content: '';
+            transition: opacity .2s cubic-bezier(.4, 0, .6, 1);
+            pointer-events: none;
+
+            opacity: 0;
+            opacity: .08;
+            color: inherit;
+            border-radius: inherit;
+            background-color: rgba(0, 0, 0, .87);
+            background-color: currentColor;
           }
         }
       }
     }
   }
+
 </style>
