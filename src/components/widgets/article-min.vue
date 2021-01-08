@@ -27,37 +27,16 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-// import stockModule from '@/store/modules/stock-data';
 
 @Component({
   computed: {
-    // iexNewsData: {
-    //   get() {
-    //     return stockModule.iexNewsData;
-    //   },
-    // },
-    // currentDateTime: {
-    //   get() {
-    //     const currentdate = new Date();
-    //     return currentdate;
-    //   },
-    // },
+    //
   },
   props: {
     article: Object,
   },
 })
 export default class ArticleMin extends Vue {
-  // testFunc() {
-  //   console.warn(this.$props.article);
-  // }
-
-  // get currentDateTime() {
-  //   const a = this.$props.article;
-  //   const currentdate = new Date().getTime();
-  //   return currentdate;
-  // }
-
   get articleTime() {
     let dateStr = '';
 
