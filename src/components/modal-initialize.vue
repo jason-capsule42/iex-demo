@@ -89,4 +89,5 @@ export default class ModalInitialize extends Vue {
   .v-card__title {
     display: block;
   }
+
 </style>

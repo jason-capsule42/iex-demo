@@ -152,7 +152,7 @@
         </div>
       </td>
     </tr>
-    <tr>
+    <!-- <tr>
       <td colspan="2">
         {{ iexQuoteData }}
       </td>
@@ -161,7 +161,7 @@
       <td colspan="2">
         {{ iexFinancialData }}
       </td>
-    </tr>
+    </tr> -->
   </table>
 </template>
 
