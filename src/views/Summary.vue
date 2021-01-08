@@ -1,5 +1,4 @@
 <template>
-  <!-- <v-sheet fluid> -->
   <v-container fluid>
     <v-row class="headerRow">
       <v-col
@@ -7,19 +6,48 @@
         class="headerContent"
       >
         <div class="indexLabeling">
-          <h2>
-            {{ iexCompanyData.companyName }} ({{ iexCompanyData.symbol }})
-          </h2>
-          <div class="exchangeMarket">
-            {{ iexCompanyData.exchange }}
-          </div>
+          <template v-if="iexCompanyData.length > 0">
+            <h2>
+              {{ iexCompanyData.companyName }} ({{ iexCompanyData.symbol }})
+            </h2>
+            <div class="exchangeMarket">
+              {{ iexCompanyData.exchange }}
+            </div>
+          </template>
         </div>
-        <index-selector
-          class="indexSearch"
-        />
+        <index-selector class="indexSearch" />
       </v-col>
     </v-row>
-    <v-row>
+    <v-row v-if="!iexIndex">
+      <v-col>
+        <v-sheet class="system-msgs">
+          <span>
+            A Stock Index is required. Please use Quote Lookup.
+          </span>
+        </v-sheet>
+      </v-col>
+    </v-row>
+    <v-row v-else-if="dataFetching">
+      <v-col>
+        <v-sheet class="system-msgs">
+          <v-progress-circular
+            :size="100"
+            :width="7"
+            indeterminate
+          />
+        </v-sheet>
+      </v-col>
+    </v-row>
+    <v-row v-else-if="dataFetchError">
+      <v-col>
+        <v-sheet class="system-msgs">
+          <p class="error-msg">
+            {{ dataFetchErrorMsg ? dataFetchErrorMsg : 'error fetching stock data' }}
+          </p>
+        </v-sheet>
+      </v-col>
+    </v-row>
+    <v-row v-else>
       <v-col cols="4">
         <v-sheet>
           <div class="sectionHead">
@@ -67,12 +95,6 @@
               >
                 charts
               </div>
-              <!-- <div
-                :class="['sectionItem', {'active': activeTab === 'news'}]"
-                @click="setSectionTab('news')"
-              >
-                News
-              </div> -->
             </div>
           </div>
           <v-sheet>
@@ -87,8 +109,6 @@
                 :height="400"
                 light
               >
-                <!-- cycle
-                interval="10000" -->
                 <v-carousel-item
                   transition="fade-transition"
                   reverse-transition="fade-transition"
@@ -117,9 +137,6 @@
                 </v-carousel-item>
               </v-carousel>
             </template>
-            <!-- <template v-if="activeTab === 'news'">
-              news
-            </template> -->
           </v-sheet>
         </v-sheet>
         <v-sheet>
@@ -327,6 +344,26 @@ import NewsBlock from '../components/newsBlock.vue';
     activeTab: 'performance',
   }),
   computed: {
+    iexIndex: {
+      get() {
+        return stockModule.iexIndex;
+      },
+    },
+    dataFetching: {
+      get() {
+        return stockModule.dataFetching;
+      },
+    },
+    dataFetchError: {
+      get() {
+        return stockModule.dataFetchError;
+      },
+    },
+    dataFetchErrorMsg: {
+      get() {
+        return stockModule.dataFetchErrorMsg;
+      },
+    },
     iexHistoricalPricesData: {
       get() {
         return stockModule.iexHistoricalPricesData;
@@ -357,7 +394,6 @@ import NewsBlock from '../components/newsBlock.vue';
 export default class Summary extends Vue {
   setSectionTab(tab: string) {
     this.$data.activeTab = tab;
-    console.warn('tab', tab);
   }
 }
 </script>

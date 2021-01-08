@@ -4,50 +4,7 @@
     <v-main>
       <modal-initialize v-if="!$store.state.config.isInitialized" />
       <template v-else>
-        <template v-if="!iexIndex && $route.name !== 'Config'">
-          <v-container fluid>
-            <v-row>
-              <v-col>
-                <v-sheet class="system-msgs">
-                  <span>
-                    A Stock Index is required. Please use SEARCH above.
-                  </span>
-                </v-sheet>
-              </v-col>
-            </v-row>
-          </v-container>
-        </template>
-        <template v-else>
-          <template v-if="dataFetching">
-            <v-container fluid>
-              <v-row>
-                <v-col>
-                  <v-sheet class="system-msgs">
-                    <v-progress-circular
-                      :size="100"
-                      :width="7"
-                      indeterminate
-                    />
-                  </v-sheet>
-                </v-col>
-              </v-row>
-            </v-container>
-          </template>
-          <template v-else-if="dataFetchError && $route.name !== 'Config'">
-            <v-container fluid>
-              <v-row>
-                <v-col>
-                  <v-sheet class="system-msgs">
-                    <p class="error-msg">
-                      {{ dataFetchErrorMsg ? dataFetchErrorMsg : 'error fetching stock data' }}
-                    </p>
-                  </v-sheet>
-                </v-col>
-              </v-row>
-            </v-container>
-          </template>
-          <router-view />
-        </template>
+        <router-view />
       </template>
     </v-main>
   </v-app>
@@ -92,21 +49,6 @@ am4core.useTheme(am4themes_animated);
     iexIndex: {
       get() {
         return stockModule.iexIndex;
-      },
-    },
-    dataFetching: {
-      get() {
-        return stockModule.dataFetching;
-      },
-    },
-    dataFetchError: {
-      get() {
-        return stockModule.dataFetchError;
-      },
-    },
-    dataFetchErrorMsg: {
-      get() {
-        return stockModule.dataFetchErrorMsg;
       },
     },
   },
@@ -199,7 +141,6 @@ export default class App extends Vue {
       stockModule.mutateIexNewsData(JSON.parse(JSON.stringify(newsData, null, 2)));
 
       const quote = await iexClient.symbol(stockModule.iexIndex).ohlc(); // Open/Close/High/Low/Bid/Volume/etc.
-      console.warn('quote', quote);
       stockModule.mutateIexQuoteData(JSON.parse(JSON.stringify(quote, null, 2)));
 
       // TODO: need to do some handling for a lack of error but empty data results

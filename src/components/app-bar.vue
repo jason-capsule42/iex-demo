@@ -12,27 +12,6 @@
       </span>
     </v-toolbar-title>
     <v-spacer />
-    <v-btn
-      :class="{'active': searchActive}"
-      color="transparent"
-      elevation="0"
-      @click="searchActive = true"
-    >
-      <v-icon
-        small
-        left
-      >
-        mdi-magnify
-      </v-icon>
-      <span v-if="!searchActive">
-        SEARCH
-      </span>
-      <index-selector
-        v-if="searchActive"
-        class="indexSearch"
-        @search-complete="searchActive = false"
-      />
-    </v-btn>
     <v-list class="nav-menu">
       <template v-for="(item, idx) in navItems">
         <v-list-item
@@ -139,26 +118,11 @@ import indexSelector from './indexSelector.vue';
 })
 export default class App extends Vue {
   navItems = [
-    {
-      title: 'Summary',
-      link: '/',
-      icon: 'mdi-home',
-    },
-    {
-      title: 'News',
-      link: '/news',
-      icon: 'mdi-information',
-    },
-    {
-      title: 'Company',
-      link: '/company',
-      icon: 'mdi-chart-box',
-    },
-    {
-      title: '',
-      link: '/config',
-      icon: 'mdi-cog',
-    },
+    // {
+    //   title: '',
+    //   link: '/config',
+    //   icon: 'mdi-cog',
+    // },
   ]
 
   searchActive = false;
