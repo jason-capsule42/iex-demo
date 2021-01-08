@@ -7,14 +7,28 @@
             {{ iexCompanyData.companyName }}
           </div>
           <div class="address">
-            <div>
+            <div v-if="iexCompanyData.address">
               {{ iexCompanyData.address }}
             </div>
             <div v-if="iexCompanyData.address2">
               {{ iexCompanyData.address2 }}
             </div>
             <div>
-              {{ iexCompanyData.city }}, {{ iexCompanyData.state }} {{ iexCompanyData.zip }}
+              <template v-if="iexCompanyData.city">
+                {{ iexCompanyData.city }}
+              </template>
+              <template v-if="iexCompanyData.city && iexCompanyData.state">
+                ,&nbsp;
+              </template>
+              <template v-if="iexCompanyData.state">
+                {{ iexCompanyData.state }}
+              </template>
+              <template v-if="(iexCompanyData.city || iexCompanyData.state) && iexCompanyData.zip">
+                &nbsp;
+              </template>
+              <template>
+                {{ iexCompanyData.zip }}
+              </template>
             </div>
           </div>
         </v-col>
@@ -76,19 +90,11 @@
         </v-col>
       </v-row>
     </template>
-    <!-- <v-row v-if="iexCompanyData">
-      <v-col>
-        <h1>IEX News Data</h1>
-        <pre>
-        {{ iexCompanyData }}
-        </pre>
-      </v-col>
-    </v-row> -->
   </v-container>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import stockModule from '@/store/modules/stock-data';
 
 @Component({
@@ -108,6 +114,9 @@ import stockModule from '@/store/modules/stock-data';
 })
 export default class News extends Vue {
   generatePhoneStr() {
+    if (!stockModule.iexCompanyData.phone) {
+      return;
+    }
     const phone = stockModule.iexCompanyData.phone.toString();
     const cleaned = (phone).replace(/\D/g, '');
 
