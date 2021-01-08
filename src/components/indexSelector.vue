@@ -96,6 +96,7 @@ export default class IndexSearch extends Vue {
 
   completeSearch() {
     this.$emit('search-complete');
+    this.$data.model = null;
   }
 
   updateIexIndex(index: string) {
