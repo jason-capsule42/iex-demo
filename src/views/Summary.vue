@@ -21,7 +21,10 @@
             </div>
           </template>
         </div>
-        <index-selector class="indexSearch" />
+        <index-selector
+          class="indexSearch"
+          @search-complete="activeTab = 'performance'"
+        />
       </v-col>
     </v-row>
     <v-row v-if="!iexIndex">
@@ -105,6 +108,7 @@
                 performance
               </div>
               <div
+                v-if="hasFinancialData"
                 :class="['sectionItem', {'active': activeTab === 'charts'}]"
                 @click="setSectionTab('charts')"
               >
@@ -116,7 +120,7 @@
             <template v-if="activeTab === 'performance'">
               <cumul-perf />
             </template>
-            <template v-if="activeTab === 'charts'">
+            <template v-if="activeTab === 'charts' && hasFinancialData">
               <v-carousel
                 v-model="carousel"
                 :hide-delimiter-background="true"
@@ -154,181 +158,15 @@
             </template>
           </v-sheet>
         </v-sheet>
-        <v-sheet>
-          <div class="sectionHead" />
-        </v-sheet>
-        <news-block />
+        <template v-if="stockModule.iexNewsData.length > 0">
+          <v-sheet>
+            <div class="sectionHead" />
+          </v-sheet>
+          <news-block />
+        </template>
       </v-col>
     </v-row>
-    <!--  -->
-    <!--  -->
-    <!--  -->
-    <!--  -->
-    <!--  -->
-    <!--  -->
-    <!--  -->
-    <!--  -->
-    <!-- <v-row>
-      <v-col
-        col="12"
-        class="topSection"
-      >
-        <div class="contentBrief">
-          <div class="briefDivider">
-            <div>
-              <span :class="['closingPrice']">
-                ${{ iexClosePrice }}
-              </span>
-              <span :class="['priceChange', {'up': currentChangePrice > 0}, {'down': currentChangePrice < 0}]">
-                <v-icon v-if="currentChangePrice > 0">
-                  mdi-trending-up
-                </v-icon>
-                <v-icon v-if="currentChangePrice < 0">
-                  mdi-trending-down
-                </v-icon>
-                <span>
-                  {{ currentChangePrice }}
-                </span>
-                <span>
-                  {{ currentChangePercent }}%
-                </span>
-              </span>
-            </div>
-          </div>
-          <quote-table />
-        </div>
-        <div class="sections">
-          <div class="sectionsNavWrapper">
-            <div class="sectionNav">
-              <div
-                :class="['sectionItem', {'active': activeTab === 'summary'}]"
-                @click="setSectionTab('summary')"
-              >
-                Summary
-              </div>
-              <div
-                :class="['sectionItem', {'active': activeTab === 'charts'}]"
-                @click="setSectionTab('charts')"
-              >
-                Charts
-              </div>
-              <div
-                :class="['sectionItem', {'active': activeTab === 'news'}]"
-                @click="setSectionTab('news')"
-              >
-                News
-              </div>
-            </div>
-          </div>
-        </div>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12">
-        <v-sheet>
-          <h1>
-            {{ iexCompanyData.companyName }} ({{ iexCompanyData.symbol }})
-          </h1>
-          <p>
-            {{ iexCompanyData.exchange }}
-          </p>
-          <div>
-            <span :class="['closingPrice']">
-              ${{ iexClosePrice }}
-            </span>
-            <span :class="['priceChange', {'up': currentChangePrice > 0}, {'down': currentChangePrice < 0}]">
-              <v-icon v-if="currentChangePrice > 0">
-                mdi-trending-up
-              </v-icon>
-              <v-icon v-if="currentChangePrice < 0">
-                mdi-trending-down
-              </v-icon>
-              <span>
-                {{ currentChangePrice }}
-              </span>
-              <span>
-                {{ currentChangePercent }}%
-              </span>
-            </span>
-          </div>
-        </v-sheet>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col
-        cols="12"
-        md="6"
-      >
-        <v-sheet
-          height="100%"
-          :min-height="chartMinHeight"
-          width="100%"
-        >
-          <cumul-perf />
-        </v-sheet>
-      </v-col>
-      <v-col
-        v-if="iexHistoricalPricesData"
-        cols="12"
-        :md="iexHistoricalPricesData ? 6 : 12"
-      >
-        <v-sheet
-          height="100%"
-          :min-height="chartMinHeight"
-          width="100%"
-        >
-          <v-carousel
-            v-model="carousel"
-            :hide-delimiter-background="true"
-            :show-arrows-on-hover="true"
-            cycle
-            interval="10000"
-            light
-          >
-            <v-carousel-item
-              transition="fade-transition"
-              reverse-transition="fade-transition"
-            >
-              <v-sheet
-                color="white"
-                height="100%"
-                :min-height="chartMinHeight"
-                width="100%"
-              >
-                <asset-chart class="carouselChart" />
-              </v-sheet>
-            </v-carousel-item>
-            <v-carousel-item
-              transition="fade-transition"
-              reverse-transition="fade-transition"
-            >
-              <v-sheet
-                color="white"
-                height="100%"
-                :min-height="chartMinHeight"
-                width="100%"
-              >
-                <liabilities-chart class="carouselChart" />
-              </v-sheet>
-            </v-carousel-item>
-          </v-carousel>
-        </v-sheet>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-row>
-          <v-col
-            cols="12"
-            md="6"
-          >
-            <quote-table />
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row> -->
   </v-container>
-  <!-- </v-sheet> -->
 </template>
 
 <script lang="ts">
@@ -393,6 +231,17 @@ import PriceChart from '../components/charts/priceHistory.vue';
         return stockModule.iexCompanyData;
       },
     },
+    hasFinancialData: {
+      get() {
+        return Object.keys(stockModule.iexFinancialData).length > 0
+          && stockModule.iexFinancialData.constructor === Object;
+      },
+    },
+    iexFinancialData: {
+      get() {
+        return stockModule.iexFinancialData;
+      },
+    },
     iexClosePrice: {
       get() {
         return stockModule.currentClosingData.close;
@@ -411,6 +260,8 @@ import PriceChart from '../components/charts/priceHistory.vue';
   },
 })
 export default class Summary extends Vue {
+  stockModule = stockModule;
+
   setSectionTab(tab: string) {
     this.$data.activeTab = tab;
   }
