@@ -101,7 +101,8 @@
         </div>
         <div class="dataValue">
           <template v-if="price52WeekRange && price52WeekRange.low && price52WeekRange.high">
-            ${{ price52WeekRange.low }} - ${{ price52WeekRange.high }}
+            <!-- ${{ price52WeekRange.low }} - ${{ price52WeekRange.high }} -->
+            <span class="placeholderValue">=== Value ===</span>
           </template>
         </div>
       </td>
@@ -233,7 +234,7 @@ export default class QuoteTable extends Vue {
   .placeholderValue {
     font-style: italic;
 
-    opacity: .5;
+    opacity: 0;
   }
 
 </style>
