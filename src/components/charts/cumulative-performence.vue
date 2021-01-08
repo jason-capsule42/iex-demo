@@ -229,7 +229,7 @@ export default class WidgetCumperf extends Vue {
   @Watch('startDate')
   filterByStartDate() {
     const a = this.$data.earliestDate;
-    console.warn('filtering by start date');
+    // console.warn('filtering by start date');
 
     // add functional filtering by date
   }
@@ -237,7 +237,7 @@ export default class WidgetCumperf extends Vue {
   @Watch('endDate')
   filterByendDate() {
     const a = this.$data.earliestDate;
-    console.warn('filtering by end date');
+    // console.warn('filtering by end date');
 
     // add functional filtering by date
   }
