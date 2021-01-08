@@ -265,6 +265,7 @@ export default class WidgetCumperf extends Vue {
 
   .v-btn:not(.v-btn--round).v-size--default {
     height: unset;
+    height: 23px;
     margin-left: 5px;
     padding: 3px 6px;
 
