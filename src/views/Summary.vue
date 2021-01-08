@@ -6,11 +6,17 @@
         class="headerContent"
       >
         <div class="indexLabeling">
-          <template v-if="iexCompanyData.length > 0">
+          <template v-if="iexCompanyData.companyName">
             <h2>
-              {{ iexCompanyData.companyName }} ({{ iexCompanyData.symbol }})
+              {{ iexCompanyData.companyName }}
+              <template v-if="iexCompanyData.symbol">
+                ({{ iexCompanyData.symbol }})
+              </template>
             </h2>
-            <div class="exchangeMarket">
+            <div
+              v-if="iexCompanyData.exchange"
+              class="exchangeMarket"
+            >
               {{ iexCompanyData.exchange }}
             </div>
           </template>
@@ -534,7 +540,9 @@ export default class Summary extends Vue {
       flex: 1;
 
       .exchangeMarket {
-        font-size: .8em;
+        font-size: .7em;
+
+        opacity: .6;
       }
     }
 
