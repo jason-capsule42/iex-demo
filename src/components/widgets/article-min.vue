@@ -134,6 +134,7 @@ export default class ArticleMin extends Vue {
 
     img {
       width: 100%;
+      max-height: 130px;
 
       object-fit: cover;
     }
