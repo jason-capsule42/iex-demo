@@ -27,7 +27,7 @@ class IndexModule extends VuexModule {
 
   iexFinancialData = [];
 
-  iexCompanyData = [];
+  iexCompanyData = {};
 
   iexNewsData = '';
 

@@ -84,6 +84,9 @@
           </div>
           <quote-table />
         </v-sheet>
+        <v-sheet>
+          <company-info />
+        </v-sheet>
       </v-col>
       <v-col cols="8">
         <v-sheet>
@@ -331,6 +334,7 @@ import AssetChart from '../components/charts/assets.vue';
 import LiabilitiesChart from '../components/charts/liabilities.vue';
 import QuoteTable from '../components/widgets/quote.vue';
 import NewsBlock from '../components/newsBlock.vue';
+import CompanyInfo from '../components/companyInfo.vue';
 
 @Component({
   components: {
@@ -340,6 +344,7 @@ import NewsBlock from '../components/newsBlock.vue';
     LiabilitiesChart,
     QuoteTable,
     NewsBlock,
+    CompanyInfo,
   },
   props: {
     //
