@@ -21,17 +21,17 @@ class IndexModule extends VuexModule {
 
   dataFetchErrorMsg = '';
 
-  iexHistoricalPricesData = [];
+  iexHistoricalPricesData: object[] = [];
 
-  latestPriceData = {};
+  latestPriceData = ''
 
-  iexFinancialData = [];
+  iexFinancialData = ''
 
-  iexCompanyData = {};
+  iexCompanyData = '';
 
   iexNewsData = '';
 
-  iexQuoteData = [];
+  iexQuoteData = {};
 
   get currentClosingData() {
     const lastEntry = this.iexHistoricalPricesData[this.iexHistoricalPricesData.length - 1];
@@ -70,7 +70,7 @@ class IndexModule extends VuexModule {
   }
 
   @Mutation
-  mutateIexHistoricalData(value: object) {
+  mutateIexHistoricalData(value: object[]) {
     this.iexHistoricalPricesData = value;
   }
 

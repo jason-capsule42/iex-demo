@@ -54,7 +54,10 @@
       </v-col>
     </v-row>
     <v-row v-else>
-      <v-col cols="4">
+      <v-col
+        cols="4"
+        class="leftCol"
+      >
         <v-sheet>
           <div class="sectionHead">
             <div class="overviewWrapper">
@@ -83,6 +86,9 @@
             </div>
           </div>
           <quote-table />
+        </v-sheet>
+        <v-sheet>
+          <price-chart />
         </v-sheet>
         <v-sheet>
           <company-info />
@@ -335,6 +341,7 @@ import LiabilitiesChart from '../components/charts/liabilities.vue';
 import QuoteTable from '../components/widgets/quote.vue';
 import NewsBlock from '../components/newsBlock.vue';
 import CompanyInfo from '../components/companyInfo.vue';
+import PriceChart from '../components/charts/priceHistory.vue';
 
 @Component({
   components: {
@@ -345,6 +352,7 @@ import CompanyInfo from '../components/companyInfo.vue';
     QuoteTable,
     NewsBlock,
     CompanyInfo,
+    PriceChart,
   },
   props: {
     //
@@ -411,6 +419,14 @@ export default class Summary extends Vue {
 
 <style lang="scss" scoped>
   @import '../styles/_variables.scss';
+
+  .leftCol {
+    .v-sheet {
+      &:not(:last-child) {
+        margin-bottom: 20px;
+      }
+    }
+  }
 
   .sectionHead {
     display: flex;
@@ -602,6 +618,27 @@ export default class Summary extends Vue {
   .closingPrice {
     font-size: 2em;
     font-weight: 700;
+  }
+
+  .v-carousel {
+    position: relative;
+
+    &:after {
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      display: block;
+
+      width: 100%;
+      height: calc(100% + 0px);
+
+      content: '';
+      pointer-events: none;
+
+      border: solid 1px rgba(0, 0, 0, .25);
+      border-top: 0;
+    }
   }
 
   .carouselChart {
